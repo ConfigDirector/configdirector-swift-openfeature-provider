@@ -127,7 +127,7 @@
 			mainGroup = CD0000000000000000000002;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				CD0000000000000000000010 /* XCRemoteSwiftPackageReference "swift-openfeature-provider" */,
+				CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */,
 				CD000000000000000000001E /* XCRemoteSwiftPackageReference "swift-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -281,9 +281,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CD0000000000000000000010 /* XCRemoteSwiftPackageReference "swift-openfeature-provider" */ = {
+		CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ConfigDirector/swift-openfeature-provider.git";
+			repositoryURL = "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.1.0;
@@ -302,7 +302,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		CD0000000000000000000011 /* ConfigDirectorOpenFeatureProvider */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CD0000000000000000000010 /* XCRemoteSwiftPackageReference "swift-openfeature-provider" */;
+			package = CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */;
 			productName = ConfigDirectorOpenFeatureProvider;
 		};
 		CD000000000000000000001F /* OpenFeature */ = {

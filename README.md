@@ -4,22 +4,22 @@
 
 [OpenFeature](https://openfeature.dev) provider for [ConfigDirector](https://www.configdirector.com), remote config and feature flags with typed values, JSON Schema validation, and safe renames of live flags. Start free, no card required.
 
-It plugs the [ConfigDirector Swift SDK](https://github.com/ConfigDirector/swift-client-sdk) into the [OpenFeature Swift SDK](https://github.com/open-feature/swift-sdk), and supports iOS, iPadOS, macOS, tvOS, and watchOS.
+It plugs the [ConfigDirector Swift SDK](https://github.com/ConfigDirector/configdirector-swift-sdk) into the [OpenFeature Swift SDK](https://github.com/open-feature/swift-sdk), and supports iOS, iPadOS, macOS, tvOS, and watchOS.
 
 ## Install
 
-In Xcode, go to **File → Add Package Dependencies…** and enter the package URL `https://github.com/ConfigDirector/swift-openfeature-provider`. In a Swift package, declare it in `Package.swift` alongside the OpenFeature Swift SDK:
+In Xcode, go to **File → Add Package Dependencies…** and enter the package URL `https://github.com/ConfigDirector/configdirector-swift-openfeature-provider`. In a Swift package, declare it in `Package.swift` alongside the OpenFeature Swift SDK:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ConfigDirector/swift-openfeature-provider", from: "0.1.0"),
+    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider", from: "0.1.0"),
     .package(url: "https://github.com/open-feature/swift-sdk", from: "0.6.0"),
 ],
 targets: [
     .target(
         name: "YourTarget",
         dependencies: [
-            .product(name: "ConfigDirectorOpenFeatureProvider", package: "swift-openfeature-provider"),
+            .product(name: "ConfigDirectorOpenFeatureProvider", package: "configdirector-swift-openfeature-provider"),
             .product(name: "OpenFeature", package: "swift-sdk"),
         ]
     ),
@@ -101,7 +101,7 @@ There is also [a quickstart guide for ConfigDirector and any of our SDKs](https:
 - [Contact support](https://www.configdirector.com/support)
 
 [//]: # "links"
-[ci-badge]: https://github.com/ConfigDirector/swift-openfeature-provider/actions/workflows/ci.yml/badge.svg
-[ci]: https://github.com/ConfigDirector/swift-openfeature-provider/actions/workflows/ci.yml
-[release-badge]: https://img.shields.io/github/v/release/ConfigDirector/swift-openfeature-provider
-[release]: https://github.com/ConfigDirector/swift-openfeature-provider/releases
+[ci-badge]: https://github.com/ConfigDirector/configdirector-swift-openfeature-provider/actions/workflows/ci.yml/badge.svg
+[ci]: https://github.com/ConfigDirector/configdirector-swift-openfeature-provider/actions/workflows/ci.yml
+[release-badge]: https://img.shields.io/github/v/release/ConfigDirector/configdirector-swift-openfeature-provider
+[release]: https://github.com/ConfigDirector/configdirector-swift-openfeature-provider/releases

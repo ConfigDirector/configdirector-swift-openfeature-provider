@@ -1,10 +1,10 @@
 {
-  "originHash" : "6606debbd9b01ba9a58cfed5a7cd86c59dc34e0e8de717cf1609008c82923a5a",
+  "originHash" : "33af1ec502a1fcd21abd25651f4b228a6fbb5ab8034e40f462a58a0a7935a3c9",
   "pins" : [
     {
-      "identity" : "swift-client-sdk",
-      "kind" : "localSourceControl",
-      "location" : "https://github.com/ConfigDirector/swift-client-sdk.git",
+      "identity" : "configdirector-swift-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ConfigDirector/configdirector-swift-sdk.git",
       "state" : {
         "revision" : "c3fe61d6ad182954d02c8ecf9a93406287e062ad",
         "version" : "1.4.0"

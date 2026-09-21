@@ -21,7 +21,7 @@ The project adds the provider and the OpenFeature Swift SDK the way your own app
 released Swift packages, resolved from a version rather than from a path:
 
 ```
-https://github.com/ConfigDirector/swift-openfeature-provider.git
+https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git
 https://github.com/open-feature/swift-sdk.git
 ```
 
@@ -30,14 +30,14 @@ In Xcode that is **File → Add Package Dependencies…**, pasting each URL and 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ConfigDirector/swift-openfeature-provider.git", from: "0.1.0"),
+    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git", from: "0.1.0"),
     .package(url: "https://github.com/open-feature/swift-sdk.git", from: "0.6.0"),
 ],
 targets: [
     .target(
         name: "YourApp",
         dependencies: [
-            .product(name: "ConfigDirectorOpenFeatureProvider", package: "swift-openfeature-provider"),
+            .product(name: "ConfigDirectorOpenFeatureProvider", package: "configdirector-swift-openfeature-provider"),
             .product(name: "OpenFeature", package: "swift-sdk"),
         ]
     ),
@@ -94,7 +94,9 @@ only where `ConfigDirectorOpenFeatureProvider` comes from changes.
 open ConfigDirectorOpenFeatureSample-Local.xcworkspace
 ```
 
-This is what CI builds.
+This is what CI builds. The override only takes effect when the repository is checked out into a
+folder named `configdirector-swift-openfeature-provider` — see
+[Contributing](../CONTRIBUTING.md#the-sample-app).
 
 ## What it shows
 

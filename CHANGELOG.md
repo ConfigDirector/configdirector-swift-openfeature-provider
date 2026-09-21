@@ -3,6 +3,9 @@
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Releases take their notes from this file, so the section for a version has to exist before that
+version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
+
 ## [Unreleased]
 
 ### Added
