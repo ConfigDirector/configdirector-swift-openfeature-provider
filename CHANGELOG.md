@@ -8,6 +8,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-21
+
 ### Added
 
 - `ConfigDirectorProvider`, an OpenFeature provider for the OpenFeature Swift SDK backed by the
