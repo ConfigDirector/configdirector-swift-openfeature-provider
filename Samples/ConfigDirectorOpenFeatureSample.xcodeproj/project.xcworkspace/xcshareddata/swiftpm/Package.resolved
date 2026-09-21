@@ -1,12 +1,12 @@
 {
-  "originHash" : "f7030508de9282cdc551cd1a4254a99cf0ebd932d1e4d261703a0a9778f2c22f",
+  "originHash" : "ca88b00f94e88a211d429ea97df067d582356a8a995851c6f8f6aa7656545495",
   "pins" : [
     {
       "identity" : "configdirector-swift-openfeature-provider",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git",
       "state" : {
-        "revision" : "bfd3190b21d2e811c826dde2ac5213e1ba982131",
+        "revision" : "ec99478bb67698631782d3646c8b19eb6616bd89",
         "version" : "0.1.0"
       }
     },
