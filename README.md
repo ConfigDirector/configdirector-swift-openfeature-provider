@@ -85,6 +85,10 @@ await OpenFeatureAPI.shared.setEvaluationContextAndWait(
 
 The OpenFeature Swift SDK does not shut providers down. The provider closes its connection when it is released, which happens after `OpenFeatureAPI.shared.clearProvider()` as long as you hold no other reference to it. To close it while you still hold one, call `provider.close()`.
 
+## Sample app
+
+[Samples](Samples) holds an iOS and iPadOS app that reads flags through OpenFeature and re-renders as their values change.
+
 ## Documentation
 
 Refer to the [official documentation for the Swift SDK](https://docs.configdirector.com/sdks/mobile/swift) for the options the provider accepts, and to the [OpenFeature Swift SDK reference](https://openfeature.dev/docs/reference/sdks/client/swift) for evaluating flags, handling events and writing hooks.
