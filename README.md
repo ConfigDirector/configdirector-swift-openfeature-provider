@@ -37,63 +37,22 @@ await OpenFeatureAPI.shared.setProviderAndWait(
     provider: provider,
     initialContext: ImmutableContext(targetingKey: "user-123")
 )
-
 let client = OpenFeatureAPI.shared.getClient()
+
 let darkMode = client.getBooleanValue(key: "dark-mode", defaultValue: false)
 ```
 
-When ConfigDirector cannot be reached in time, the provider reports an error status. It keeps trying to connect and reports ready once it succeeds; until then flags resolve to their default values.
+Full details are in the [official documentation](https://docs.configdirector.com/sdks/openfeature/swift).
 
-The types that configure the underlying ConfigDirector client are exported from the provider's module, so configuring it needs no second import:
+## Documentation
 
-```swift
-let provider = try ConfigDirectorProvider(
-    clientSDKKey: "YOUR-CLIENT-SDK-KEY",
-    options: ConfigDirectorClientOptions(
-        connection: ConnectionOptions(mode: .polling, pollingInterval: 120),
-        logger: ConsoleLogger(level: .debug)
-    )
-)
-```
+Refer to the [official documentation for the OpenFeature Swift provider](https://docs.configdirector.com/sdks/openfeature/swift).
 
-## Evaluation context
-
-The OpenFeature evaluation context is sent to ConfigDirector as the user's context:
-
-| OpenFeature                     | ConfigDirector |
-| ------------------------------- | -------------- |
-| the targeting key, or else `id` | `id`           |
-| `name`                          | `name`         |
-| `traits`, a structure           | `traits`       |
-| `anonymous`, a boolean          | `anonymous`    |
-
-Any other attribute is ignored. Put the values your targeting rules depend on inside `traits`:
-
-```swift
-await OpenFeatureAPI.shared.setEvaluationContextAndWait(
-    evaluationContext: ImmutableContext(
-        targetingKey: "user-123",
-        structure: ImmutableStructure(attributes: [
-            "name": .string("Ada"),
-            "traits": .structure(["plan": .string("pro")]),
-        ])
-    )
-)
-```
-
-## Shutting down
-
-The OpenFeature Swift SDK does not shut providers down. The provider closes its connection when it is released, which happens after `OpenFeatureAPI.shared.clearProvider()` as long as you hold no other reference to it. To close it while you still hold one, call `provider.close()`.
+There is also [a quickstart guide for ConfigDirector and any of our SDKs](https://docs.configdirector.com/getting-started/quickstart).
 
 ## Sample apps
 
 [Samples](Samples) holds iOS and iPadOS, macOS, tvOS and watchOS apps that read flags through OpenFeature and re-render as their values change.
-
-## Documentation
-
-Refer to the [official documentation for the Swift SDK](https://docs.configdirector.com/sdks/mobile/swift) for the options the provider accepts, and to the [OpenFeature Swift SDK reference](https://openfeature.dev/docs/reference/sdks/client/swift) for evaluating flags, handling events and writing hooks.
-
-There is also [a quickstart guide for ConfigDirector and any of our SDKs](https://docs.configdirector.com/getting-started/quickstart).
 
 ## Getting Help
 
