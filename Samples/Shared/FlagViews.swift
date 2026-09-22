@@ -54,6 +54,59 @@ struct FlagRow: View {
     }
 }
 
+struct FlagRows: View {
+    var body: some View {
+        FlagRow("temporary-feature-flag", default: false)
+        FlagRow("permanent-kill-switch", default: true)
+        FlagRow("integer-config", default: 10)
+        FlagRow("day-of-the-week-config", default: "Friday")
+        FlagRow("json-value-config", default: Value.structure([:]))
+    }
+}
+
+struct ProviderStatusLabel: View {
+    let status: ProviderStatus
+
+    var body: some View {
+        Text(status.label)
+            .foregroundColor(status == .ready ? .green : .secondary)
+    }
+}
+
+struct UserPicker: View {
+    @State private var selectedUser = SampleUser.configured
+
+    var body: some View {
+        Picker("User", selection: selection) {
+            ForEach(SampleUser.allCases) { user in
+                Text(user.label).tag(user)
+            }
+        }
+    }
+
+    private var selection: Binding<SampleUser> {
+        Binding(
+            get: { selectedUser },
+            set: { user in
+                selectedUser = user
+                OpenFeatureAPI.shared.setEvaluationContext(evaluationContext: user.context)
+            }
+        )
+    }
+}
+
+extension ProviderStatus {
+    var label: String {
+        switch self {
+        case .ready: "Ready"
+        case .reconciling: "Reconciling…"
+        case .error, .fatal: "Error"
+        case .stale: "Stale"
+        case .notReady: "Connecting…"
+        }
+    }
+}
+
 struct ContextSummary: View {
     let context: (any EvaluationContext)?
 

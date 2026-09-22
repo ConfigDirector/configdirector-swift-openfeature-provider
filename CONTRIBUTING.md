@@ -8,7 +8,7 @@ swift test
 ```
 
 CI also runs `swiftformat --lint .` and `swiftlint lint --strict`, builds the package for iOS, tvOS
-and watchOS, and builds the sample app. Run the first two before pushing:
+and watchOS, and builds the sample apps. Run the first two before pushing:
 
 ```bash
 swiftformat .
@@ -19,11 +19,11 @@ The tests need no SDK key and no network. The integration tests start an HTTP se
 and point the real ConfigDirector client at it, which is how they check what the provider sends to
 ConfigDirector, including the name and version it reports.
 
-## The sample app
+## The sample apps
 
 [Samples/ConfigDirectorOpenFeatureSample.xcodeproj](Samples/ConfigDirectorOpenFeatureSample.xcodeproj)
 depends on the released provider the way a consumer's app would, so opening the project on its own
-builds the released provider, not your working tree.
+builds the four samples against the released provider, not your working tree.
 
 [Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace](Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace)
 holds the sample project alongside this repository's package root, and a local package in a
@@ -33,9 +33,20 @@ through the workspace; it is what CI builds:
 ```bash
 xcodebuild -workspace Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace \
   -scheme ConfigDirectorOpenFeatureSample -destination 'generic/platform=iOS Simulator' build
+
+xcodebuild -workspace Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace \
+  -scheme ConfigDirectorOpenFeatureSampleMac -destination 'generic/platform=macOS' build
+
+xcodebuild -workspace Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace \
+  -scheme ConfigDirectorOpenFeatureSampleTV -destination 'generic/platform=tvOS Simulator' build
+
+xcodebuild -workspace Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace \
+  -scheme ConfigDirectorOpenFeatureSampleWatch -destination 'generic/platform=watchOS Simulator' build
 ```
 
-Building it needs no SDK key. Without one the app says so and runs anyway.
+Building them needs no SDK key. Without one each app says so and runs anyway. Building
+`ConfigDirectorOpenFeatureSampleTV` needs the tvOS platform installed (`xcodebuild -downloadPlatform tvOS`), and
+`ConfigDirectorOpenFeatureSampleWatch` the watchOS one.
 
 The override depends on the name of the folder this repository is checked out into. Swift Package
 Manager identifies a local package by its folder name and a remote one by the last component of its

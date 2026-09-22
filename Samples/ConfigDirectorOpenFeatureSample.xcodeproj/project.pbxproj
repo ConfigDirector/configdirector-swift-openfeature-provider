@@ -8,7 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		CD0000000000000000000012 /* ConfigDirectorOpenFeatureProvider in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000011 /* ConfigDirectorOpenFeatureProvider */; };
-		CD0000000000000000000020 /* OpenFeature in Frameworks */ = {isa = PBXBuildFile; productRef = CD000000000000000000001F /* OpenFeature */; };
+		CD0000000000000000000040 /* OpenFeature in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000044 /* OpenFeature */; };
+		CD0000000000000000000023 /* ConfigDirectorOpenFeatureProvider in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000022 /* ConfigDirectorOpenFeatureProvider */; };
+		CD0000000000000000000041 /* OpenFeature in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000045 /* OpenFeature */; };
+		CD000000000000000000002E /* ConfigDirectorOpenFeatureProvider in Frameworks */ = {isa = PBXBuildFile; productRef = CD000000000000000000002D /* ConfigDirectorOpenFeatureProvider */; };
+		CD0000000000000000000042 /* OpenFeature in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000046 /* OpenFeature */; };
+		CD0000000000000000000039 /* ConfigDirectorOpenFeatureProvider in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000038 /* ConfigDirectorOpenFeatureProvider */; };
+		CD0000000000000000000043 /* OpenFeature in Frameworks */ = {isa = PBXBuildFile; productRef = CD0000000000000000000047 /* OpenFeature */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,12 +23,30 @@
 		CD0000000000000000000014 /* Config.local.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.local.example.xcconfig; sourceTree = "<group>"; };
 		CD0000000000000000000015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD0000000000000000000016 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CD0000000000000000000018 /* ConfigDirectorOpenFeatureSampleWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConfigDirectorOpenFeatureSampleWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD0000000000000000000024 /* ConfigDirectorOpenFeatureSampleMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConfigDirectorOpenFeatureSampleMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD000000000000000000002F /* ConfigDirectorOpenFeatureSampleTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConfigDirectorOpenFeatureSampleTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CD0000000000000000000004 /* ConfigDirectorOpenFeatureSample */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ConfigDirectorOpenFeatureSample;
+			sourceTree = "<group>";
+		};
+		CD0000000000000000000019 /* ConfigDirectorOpenFeatureSampleWatch */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ConfigDirectorOpenFeatureSampleWatch;
+			sourceTree = "<group>";
+		};
+		CD0000000000000000000025 /* ConfigDirectorOpenFeatureSampleMac */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ConfigDirectorOpenFeatureSampleMac;
+			sourceTree = "<group>";
+		};
+		CD0000000000000000000030 /* ConfigDirectorOpenFeatureSampleTV */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ConfigDirectorOpenFeatureSampleTV;
 			sourceTree = "<group>";
 		};
 		CD000000000000000000001A /* Shared */ = {
@@ -38,7 +62,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD0000000000000000000012 /* ConfigDirectorOpenFeatureProvider in Frameworks */,
-				CD0000000000000000000020 /* OpenFeature in Frameworks */,
+				CD0000000000000000000040 /* OpenFeature in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD000000000000000000001D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0000000000000000000023 /* ConfigDirectorOpenFeatureProvider in Frameworks */,
+				CD0000000000000000000041 /* OpenFeature in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0000000000000000000028 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD000000000000000000002E /* ConfigDirectorOpenFeatureProvider in Frameworks */,
+				CD0000000000000000000042 /* OpenFeature in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0000000000000000000033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0000000000000000000039 /* ConfigDirectorOpenFeatureProvider in Frameworks */,
+				CD0000000000000000000043 /* OpenFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,6 +100,9 @@
 			isa = PBXGroup;
 			children = (
 				CD0000000000000000000004 /* ConfigDirectorOpenFeatureSample */,
+				CD0000000000000000000019 /* ConfigDirectorOpenFeatureSampleWatch */,
+				CD0000000000000000000025 /* ConfigDirectorOpenFeatureSampleMac */,
+				CD0000000000000000000030 /* ConfigDirectorOpenFeatureSampleTV */,
 				CD000000000000000000001A /* Shared */,
 				CD0000000000000000000017 /* Supporting Files */,
 				CD0000000000000000000003 /* Products */,
@@ -59,6 +113,9 @@
 			isa = PBXGroup;
 			children = (
 				CD0000000000000000000005 /* ConfigDirectorOpenFeatureSample.app */,
+				CD0000000000000000000018 /* ConfigDirectorOpenFeatureSampleWatch.app */,
+				CD0000000000000000000024 /* ConfigDirectorOpenFeatureSampleMac.app */,
+				CD000000000000000000002F /* ConfigDirectorOpenFeatureSampleTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,10 +153,85 @@
 			name = ConfigDirectorOpenFeatureSample;
 			packageProductDependencies = (
 				CD0000000000000000000011 /* ConfigDirectorOpenFeatureProvider */,
-				CD000000000000000000001F /* OpenFeature */,
+				CD0000000000000000000044 /* OpenFeature */,
 			);
 			productName = ConfigDirectorOpenFeatureSample;
 			productReference = CD0000000000000000000005 /* ConfigDirectorOpenFeatureSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CD000000000000000000001B /* ConfigDirectorOpenFeatureSampleWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD000000000000000000001F /* Build configuration list for PBXNativeTarget "ConfigDirectorOpenFeatureSampleWatch" */;
+			buildPhases = (
+				CD000000000000000000001C /* Sources */,
+				CD000000000000000000001D /* Frameworks */,
+				CD000000000000000000001E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CD0000000000000000000019 /* ConfigDirectorOpenFeatureSampleWatch */,
+				CD000000000000000000001A /* Shared */,
+			);
+			name = ConfigDirectorOpenFeatureSampleWatch;
+			packageProductDependencies = (
+				CD0000000000000000000022 /* ConfigDirectorOpenFeatureProvider */,
+				CD0000000000000000000045 /* OpenFeature */,
+			);
+			productName = ConfigDirectorOpenFeatureSampleWatch;
+			productReference = CD0000000000000000000018 /* ConfigDirectorOpenFeatureSampleWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CD0000000000000000000026 /* ConfigDirectorOpenFeatureSampleMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD000000000000000000002A /* Build configuration list for PBXNativeTarget "ConfigDirectorOpenFeatureSampleMac" */;
+			buildPhases = (
+				CD0000000000000000000027 /* Sources */,
+				CD0000000000000000000028 /* Frameworks */,
+				CD0000000000000000000029 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CD0000000000000000000025 /* ConfigDirectorOpenFeatureSampleMac */,
+				CD000000000000000000001A /* Shared */,
+			);
+			name = ConfigDirectorOpenFeatureSampleMac;
+			packageProductDependencies = (
+				CD000000000000000000002D /* ConfigDirectorOpenFeatureProvider */,
+				CD0000000000000000000046 /* OpenFeature */,
+			);
+			productName = ConfigDirectorOpenFeatureSampleMac;
+			productReference = CD0000000000000000000024 /* ConfigDirectorOpenFeatureSampleMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CD0000000000000000000031 /* ConfigDirectorOpenFeatureSampleTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD0000000000000000000035 /* Build configuration list for PBXNativeTarget "ConfigDirectorOpenFeatureSampleTV" */;
+			buildPhases = (
+				CD0000000000000000000032 /* Sources */,
+				CD0000000000000000000033 /* Frameworks */,
+				CD0000000000000000000034 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CD0000000000000000000030 /* ConfigDirectorOpenFeatureSampleTV */,
+				CD000000000000000000001A /* Shared */,
+			);
+			name = ConfigDirectorOpenFeatureSampleTV;
+			packageProductDependencies = (
+				CD0000000000000000000038 /* ConfigDirectorOpenFeatureProvider */,
+				CD0000000000000000000047 /* OpenFeature */,
+			);
+			productName = ConfigDirectorOpenFeatureSampleTV;
+			productReference = CD000000000000000000002F /* ConfigDirectorOpenFeatureSampleTV.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -115,6 +247,15 @@
 					CD0000000000000000000006 = {
 						CreatedOnToolsVersion = 26.0;
 					};
+					CD000000000000000000001B = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					CD0000000000000000000026 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					CD0000000000000000000031 = {
+						CreatedOnToolsVersion = 26.0;
+					};
 				};
 			};
 			buildConfigurationList = CD000000000000000000000A /* Build configuration list for PBXProject "ConfigDirectorOpenFeatureSample" */;
@@ -128,7 +269,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */,
-				CD000000000000000000001E /* XCRemoteSwiftPackageReference "swift-sdk" */,
+				CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CD0000000000000000000003 /* Products */;
@@ -136,6 +277,9 @@
 			projectRoot = "";
 			targets = (
 				CD0000000000000000000006 /* ConfigDirectorOpenFeatureSample */,
+				CD000000000000000000001B /* ConfigDirectorOpenFeatureSampleWatch */,
+				CD0000000000000000000026 /* ConfigDirectorOpenFeatureSampleMac */,
+				CD0000000000000000000031 /* ConfigDirectorOpenFeatureSampleTV */,
 			);
 		};
 /* End PBXProject section */
@@ -148,10 +292,52 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CD000000000000000000001E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0000000000000000000029 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0000000000000000000034 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CD0000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD000000000000000000001C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0000000000000000000027 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD0000000000000000000032 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -257,6 +443,166 @@
 			};
 			name = Release;
 		};
+		CD0000000000000000000020 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ConfigDirector;
+				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.configdirector.sample.openfeature.watch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+			};
+			name = Debug;
+		};
+		CD0000000000000000000021 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ConfigDirector;
+				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.configdirector.sample.openfeature.watch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+			};
+			name = Release;
+		};
+		CD000000000000000000002B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ConfigDirector OpenFeature";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.configdirector.sample.openfeature.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		CD000000000000000000002C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ConfigDirector OpenFeature";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.configdirector.sample.openfeature.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		CD0000000000000000000036 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ConfigDirector OpenFeature";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.configdirector.sample.openfeature.tv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+			};
+			name = Debug;
+		};
+		CD0000000000000000000037 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ConfigDirector OpenFeature";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.configdirector.sample.openfeature.tv;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -278,6 +624,33 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		CD000000000000000000001F /* Build configuration list for PBXNativeTarget "ConfigDirectorOpenFeatureSampleWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD0000000000000000000020 /* Debug */,
+				CD0000000000000000000021 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD000000000000000000002A /* Build configuration list for PBXNativeTarget "ConfigDirectorOpenFeatureSampleMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD000000000000000000002B /* Debug */,
+				CD000000000000000000002C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD0000000000000000000035 /* Build configuration list for PBXNativeTarget "ConfigDirectorOpenFeatureSampleTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD0000000000000000000036 /* Debug */,
+				CD0000000000000000000037 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -289,7 +662,7 @@
 				minimumVersion = 0.1.0;
 			};
 		};
-		CD000000000000000000001E /* XCRemoteSwiftPackageReference "swift-sdk" */ = {
+		CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/open-feature/swift-sdk.git";
 			requirement = {
@@ -305,9 +678,39 @@
 			package = CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */;
 			productName = ConfigDirectorOpenFeatureProvider;
 		};
-		CD000000000000000000001F /* OpenFeature */ = {
+		CD0000000000000000000022 /* ConfigDirectorOpenFeatureProvider */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CD000000000000000000001E /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			package = CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */;
+			productName = ConfigDirectorOpenFeatureProvider;
+		};
+		CD000000000000000000002D /* ConfigDirectorOpenFeatureProvider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */;
+			productName = ConfigDirectorOpenFeatureProvider;
+		};
+		CD0000000000000000000038 /* ConfigDirectorOpenFeatureProvider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0000000000000000000010 /* XCRemoteSwiftPackageReference "configdirector-swift-openfeature-provider" */;
+			productName = ConfigDirectorOpenFeatureProvider;
+		};
+		CD0000000000000000000044 /* OpenFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = OpenFeature;
+		};
+		CD0000000000000000000045 /* OpenFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = OpenFeature;
+		};
+		CD0000000000000000000046 /* OpenFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = OpenFeature;
+		};
+		CD0000000000000000000047 /* OpenFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */;
 			productName = OpenFeature;
 		};
 /* End XCSwiftPackageProductDependency section */

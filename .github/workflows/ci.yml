@@ -76,9 +76,25 @@ jobs:
             -Xswiftc -target -Xswiftc ${{ matrix.target }}
 
   sample:
-    name: Sample app (iOS)
+    name: Sample app (${{ matrix.name }})
     runs-on: macos-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS
+            scheme: ConfigDirectorOpenFeatureSample
+            destination: generic/platform=iOS Simulator
+          - name: macOS
+            scheme: ConfigDirectorOpenFeatureSampleMac
+            destination: generic/platform=macOS
+          - name: tvOS
+            scheme: ConfigDirectorOpenFeatureSampleTV
+            destination: generic/platform=tvOS Simulator
+          - name: watchOS
+            scheme: ConfigDirectorOpenFeatureSampleWatch
+            destination: generic/platform=watchOS Simulator
     steps:
       - uses: actions/checkout@v5
 
@@ -89,6 +105,6 @@ jobs:
       - run: |
           xcodebuild build \
             -workspace Samples/ConfigDirectorOpenFeatureSample-Local.xcworkspace \
-            -scheme ConfigDirectorOpenFeatureSample \
-            -destination 'generic/platform=iOS Simulator' \
+            -scheme ${{ matrix.scheme }} \
+            -destination '${{ matrix.destination }}' \
             -quiet
