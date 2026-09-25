@@ -659,7 +659,7 @@
 			repositoryURL = "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.1.0;
 			};
 		};
 		CD0000000000000000000048 /* XCRemoteSwiftPackageReference "swift-sdk" */ = {

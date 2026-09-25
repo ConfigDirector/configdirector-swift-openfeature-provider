@@ -44,7 +44,7 @@ In Xcode that is **File → Add Package Dependencies…**, pasting each URL and 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git", from: "0.1.0"),
+    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git", from: "1.1.0"),
     .package(url: "https://github.com/open-feature/swift-sdk.git", from: "0.6.0"),
 ],
 targets: [
