@@ -8,6 +8,10 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-25
+
+- Bumped the dependency on `configdirector-swift-sdk` to pick up evaluation type mismatch fixes.
+
 ## [1.0.0] - 2026-09-21
 
 - Added the provider to the SDK functional test harness.
