@@ -1,4 +1,4 @@
 enum Constants {
     static let providerName = "ConfigDirectorProvider"
-    static let providerVersion = "1.1.0"
+    static let providerVersion = "1.1.1"
 }

@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "ConfigDirectorOpenFeatureProvider", targets: ["ConfigDirectorOpenFeatureProvider"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ConfigDirector/configdirector-swift-sdk.git", from: "1.5.0"),
+        .package(url: "https://github.com/ConfigDirector/configdirector-swift-sdk.git", from: "1.5.1"),
         .package(url: "https://github.com/open-feature/swift-sdk.git", from: "0.6.0"),
     ],
     targets: [

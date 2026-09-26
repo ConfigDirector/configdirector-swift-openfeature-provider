@@ -8,6 +8,10 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-26
+
+- Bumped the dependency on `configdirector-swift-sdk` to pick up telemetry report fix.
+
 ## [1.1.0] - 2026-09-25
 
 - Bumped the dependency on `configdirector-swift-sdk` to pick up evaluation type mismatch fixes.

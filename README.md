@@ -12,7 +12,7 @@ In Xcode, go to **File → Add Package Dependencies…** and enter the package U
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider", from: "1.1.0"),
+    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider", from: "1.1.1"),
     .package(url: "https://github.com/open-feature/swift-sdk", from: "0.6.0"),
 ],
 targets: [
