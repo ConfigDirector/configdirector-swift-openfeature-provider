@@ -8,6 +8,14 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Added
+
+- `init(injectedClient:)`, behind `@_spi(Testing)`, creates the provider over a `ConfigDirectorClient`
+  the test owns: usually the `client` of a test client made with the Swift client SDK's
+  `ConfigDirectorTesting` product, so code that reads flags through OpenFeature can be tested
+  against values the test controls. The provider never closes a client it was given. Requires
+  version 1.7.0 of the Swift client SDK.
+
 ### Changed
 
 - Configuration-changed events list the keys of configs that a full update removed after the keys

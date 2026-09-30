@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "ConfigDirectorOpenFeatureProvider", targets: ["ConfigDirectorOpenFeatureProvider"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ConfigDirector/configdirector-swift-sdk.git", from: "1.6.0"),
+        .package(url: "https://github.com/ConfigDirector/configdirector-swift-sdk.git", from: "1.7.0"),
         .package(url: "https://github.com/open-feature/swift-sdk.git", from: "0.6.0"),
     ],
     targets: [
@@ -28,7 +28,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ConfigDirectorOpenFeatureProviderTests",
-            dependencies: ["ConfigDirectorOpenFeatureProvider"],
+            dependencies: [
+                "ConfigDirectorOpenFeatureProvider",
+                .product(name: "ConfigDirectorTesting", package: "configdirector-swift-sdk"),
+            ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

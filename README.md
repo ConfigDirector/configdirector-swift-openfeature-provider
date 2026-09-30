@@ -44,6 +44,35 @@ let darkMode = client.getBooleanValue(key: "dark-mode", defaultValue: false)
 
 Full details are in the [official documentation](https://docs.configdirector.com/sdks/openfeature/swift).
 
+## Test your code
+
+The OpenFeature Swift SDK ships no in-memory provider, so to test the code that reads flags through OpenFeature, create the provider over a **test client** from the ConfigDirector Swift SDK's `ConfigDirectorTesting` product: the SDK's real client connected to an in-memory server your test controls. Add `configdirector-swift-sdk` to your test target, and import the provider with `@_spi(Testing)`:
+
+```swift
+import ConfigDirectorTesting
+@_spi(Testing) import ConfigDirectorOpenFeatureProvider
+import OpenFeature
+import Testing
+
+struct CheckoutTests {
+    @Test func showsTheNewCheckout() async {
+        let testClient = makeTestClient(values: ["new-checkout": true])
+        defer { testClient.client.close() }
+        await OpenFeatureAPI.shared.setProviderAndWait(
+            provider: ConfigDirectorProvider(injectedClient: testClient.client)
+        )
+        let client = OpenFeatureAPI.shared.getClient()
+
+        #expect(client.getBooleanValue(key: "new-checkout", defaultValue: false))
+
+        testClient.setValue(false, for: "new-checkout")
+        #expect(!client.getBooleanValue(key: "new-checkout", defaultValue: false))
+    }
+}
+```
+
+The provider never closes a client it was given, so the test closes it. Full details are in the [testing section of the official documentation](https://docs.configdirector.com/sdks/openfeature/swift#test-your-code).
+
 ## Documentation
 
 Refer to the [official documentation for the OpenFeature Swift provider](https://docs.configdirector.com/sdks/openfeature/swift).

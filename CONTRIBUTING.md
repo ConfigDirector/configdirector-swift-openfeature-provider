@@ -9,7 +9,10 @@ swift test
 
 The tests need no SDK key and no network. The integration tests start an HTTP server on localhost
 and point the real ConfigDirector client at it, which is how they check what the provider sends to
-ConfigDirector, including the name and version it reports.
+ConfigDirector, including the name and version it reports. The tests of `init(injectedClient:)`
+drive the provider through a test client from the SDK's `ConfigDirectorTesting` product, which is
+why the test target links that product and the package's minimum SDK version is the release that
+ships it.
 
 ## CI and the pre-push hook
 

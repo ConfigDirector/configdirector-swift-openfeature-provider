@@ -57,6 +57,7 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     }
 
     private let client: any FlagClient
+    private let ownsClient: Bool
     private let statusTracker = ProviderStatusTracker()
     private let state = Locked(State())
 
@@ -71,15 +72,33 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         clientSDKKey: String,
         options: ConfigDirectorClientOptions = ConfigDirectorClientOptions()
     ) throws(ConfigDirectorError) {
-        try self.init(client: ConfigDirectorClient(
-            clientSDKKey: clientSDKKey,
-            options: options,
-            identity: .openFeatureProvider(version: Constants.providerVersion)
-        ))
+        try self.init(
+            client: ConfigDirectorClient(
+                clientSDKKey: clientSDKKey,
+                options: options,
+                identity: .openFeatureProvider(version: Constants.providerVersion)
+            ),
+            ownsClient: true
+        )
     }
 
-    init(client: any FlagClient) {
+    /// Creates a provider over a `ConfigDirectorClient` the caller owns, for tests: usually the
+    /// `client` of a test client made with the Swift SDK's `ConfigDirectorTesting` product.
+    ///
+    /// The provider initializes the client when it is registered and updates its context when the
+    /// evaluation context changes, as it does with a client it creates itself, so a client that was
+    /// already initialized reconnects. It never closes the client: ``close()`` stops the provider
+    /// and leaves the client open for the test to close.
+    ///
+    /// Import the module with `@_spi(Testing) import ConfigDirectorOpenFeatureProvider` to use it.
+    @_spi(Testing)
+    public convenience init(injectedClient client: ConfigDirectorClient) {
+        self.init(client: client, ownsClient: false)
+    }
+
+    init(client: any FlagClient, ownsClient: Bool) {
         self.client = client
+        self.ownsClient = ownsClient
 
         let events = client.events
         let listener = Task { [weak self] in
@@ -192,7 +211,8 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     ///
     /// The provider closes itself when it is released, so calling this is only necessary to shut it
     /// down while a reference to it is still held, for instance after
-    /// `OpenFeatureAPI.shared.clearProvider()`. The provider cannot be used afterwards.
+    /// `OpenFeatureAPI.shared.clearProvider()`. The provider cannot be used afterwards. A client the
+    /// provider was given through ``init(injectedClient:)`` stays open.
     public func close() {
         let listener = state.withLock { state -> Task<Void, Never>? in
             guard !state.isClosed else { return nil }
@@ -202,7 +222,9 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
 
         guard let listener else { return }
         listener.cancel()
-        client.close()
+        if ownsClient {
+            client.close()
+        }
     }
 
     private func lifecycle(_ work: @escaping @Sendable () async -> Void) -> Future<Void, Never> {

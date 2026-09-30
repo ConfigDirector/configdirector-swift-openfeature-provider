@@ -7,7 +7,7 @@ struct ConfigDirectorProviderTests {
     private let client = FakeClient()
 
     @Test func identifiesItselfAsTheConfigDirectorProvider() {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         #expect(provider.metadata.name == "ConfigDirectorProvider")
     }
@@ -19,19 +19,19 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func isNotReadyBeforeItIsInitialized() {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         #expect(provider.status == .notReady)
     }
 
     @Test func addsNoHooks() {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         #expect(provider.hooks.isEmpty)
     }
 
     @Test func initializesTheClientWithTheMappedContext() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         await provider.initialize(initialContext: ImmutableContext(targetingKey: "user-123")).value
 
@@ -39,7 +39,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func reportsReadyOnceWhenTheClientBecomesReady() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         let events = EventRecorder(provider.observe())
 
         await provider.initialize(initialContext: nil).value
@@ -48,7 +48,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func isReadyByTheTimeInitializationCompletes() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         await provider.initialize(initialContext: nil).value
 
@@ -57,7 +57,7 @@ struct ConfigDirectorProviderTests {
 
     @Test func reportsAnErrorWhenTheClientDoesNotBecomeReadyDuringInitialization() async throws {
         client.failConnections()
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         let events = EventRecorder(provider.observe())
 
         await provider.initialize(initialContext: nil).value
@@ -74,7 +74,7 @@ struct ConfigDirectorProviderTests {
 
     @Test func reportsReadyOnceTheClientRecoversFromAFailedInitialization() async {
         client.failConnections()
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         let events = EventRecorder(provider.observe())
         await provider.initialize(initialContext: nil).value
 
@@ -88,7 +88,7 @@ struct ConfigDirectorProviderTests {
     @Test func reportsReadyWhenTheClientRecoversWhileTheErrorIsBeingReported() async {
         client.scriptReadiness([false, true])
         client.failConnections()
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         let events = EventRecorder(provider.observe())
 
         await provider.initialize(initialContext: nil).value
@@ -99,7 +99,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func updatesTheClientWithTheMappedNewContext() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: ImmutableContext(targetingKey: "user-123")).value
 
         await provider.onContextSet(
@@ -111,7 +111,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func reportsReconcilingAndThenTheContextChange() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         let events = EventRecorder(provider.observe())
 
@@ -122,7 +122,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func isReconcilingWhileTheClientIsStillConnecting() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         client.holdConnections()
 
@@ -135,7 +135,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func reportsAnErrorWhenTheClientDoesNotBecomeReadyAfterAContextChange() async throws {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         client.failConnections()
         let events = EventRecorder(provider.observe())
@@ -153,7 +153,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func reportsReadyOnceTheClientRecoversFromAFailedContextChange() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         client.failConnections()
         let events = EventRecorder(provider.observe())
@@ -168,7 +168,7 @@ struct ConfigDirectorProviderTests {
 
     @Test func stopsWaitingToRecoverOnceAContextChangeSucceeds() async {
         client.failConnections()
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         client.succeedConnections()
         let events = EventRecorder(provider.observe())
@@ -179,7 +179,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func doesNotReportReadyWhenTheClientReconnectsOnItsOwn() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         let events = EventRecorder(provider.observe())
 
@@ -189,7 +189,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func reportsAConfigurationChangeWithTheUpdatedKeys() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         let events = EventRecorder(provider.observe())
 
@@ -202,7 +202,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func reportsRemovedKeysAsChangedFlags() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         await provider.initialize(initialContext: nil).value
         let events = EventRecorder(provider.observe())
 
@@ -215,7 +215,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func closesTheClient() {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         provider.close()
 
@@ -223,7 +223,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func closesTheClientOnlyOnce() {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
 
         provider.close()
         provider.close()
@@ -232,7 +232,7 @@ struct ConfigDirectorProviderTests {
     }
 
     @Test func closesTheClientWhenItIsReleased() {
-        var provider: ConfigDirectorProvider? = ConfigDirectorProvider(client: client)
+        var provider: ConfigDirectorProvider? = ConfigDirectorProvider(client: client, ownsClient: true)
         #expect(provider != nil)
 
         provider = nil
@@ -240,8 +240,36 @@ struct ConfigDirectorProviderTests {
         #expect(client.closeCount == 1)
     }
 
+    @Test func leavesAClientItWasGivenOpenWhenClosed() {
+        let provider = ConfigDirectorProvider(client: client, ownsClient: false)
+
+        provider.close()
+
+        #expect(client.closeCount == 0)
+    }
+
+    @Test func leavesAClientItWasGivenOpenWhenItIsReleased() {
+        var provider: ConfigDirectorProvider? = ConfigDirectorProvider(client: client, ownsClient: false)
+        #expect(provider != nil)
+
+        provider = nil
+
+        #expect(client.closeCount == 0)
+    }
+
+    @Test func stopsForwardingEventsFromAClientItWasGivenOnceClosed() async {
+        let provider = ConfigDirectorProvider(client: client, ownsClient: false)
+        await provider.initialize(initialContext: nil).value
+        let events = EventRecorder(provider.observe())
+
+        provider.close()
+        client.receiveConfigs(["dark-mode"])
+
+        #expect(await events.settled() == [.ready()])
+    }
+
     @Test func letsAnInitializationInFlightFinishQuietlyAfterClosing() async {
-        let provider = ConfigDirectorProvider(client: client)
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         let events = EventRecorder(provider.observe())
         client.holdConnections()
         let initialization = provider.initialize(initialContext: nil)
