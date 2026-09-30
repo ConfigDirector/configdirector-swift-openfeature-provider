@@ -8,6 +8,12 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Changed
+
+- Configuration-changed events list the keys of configs that a full update removed after the keys
+  the update carried, so flags backed by a removed config re-evaluate to their default values.
+  Requires version 1.6.0 of the Swift client SDK.
+
 ## [1.1.1] - 2026-09-26
 
 - Bumped the dependency on `configdirector-swift-sdk` to pick up telemetry report fix.

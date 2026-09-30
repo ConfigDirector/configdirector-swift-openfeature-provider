@@ -44,7 +44,7 @@ import OpenFeature
 /// resolve to the config state received earlier, or to their default values when there is none.
 ///
 /// A configuration-changed event is emitted every time config state arrives, carrying the keys of
-/// the configs in the update.
+/// the configs in the update followed by the keys of configs a full update removed.
 ///
 /// The OpenFeature Swift SDK does not shut providers down, so the connection stays open until the
 /// provider is released or ``close()`` is called. An instance serves a single registration: after
@@ -233,8 +233,8 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         switch event {
         case .ready:
             recover()
-        case let .configsUpdated(keys):
-            send(.configurationChanged(ProviderEventDetails(flagsChanged: keys)))
+        case let .configsUpdated(update):
+            send(.configurationChanged(ProviderEventDetails(flagsChanged: update.keys + update.removedKeys)))
         case .contextUpdated:
             break
         }

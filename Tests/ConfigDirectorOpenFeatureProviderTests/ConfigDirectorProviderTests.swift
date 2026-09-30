@@ -201,6 +201,19 @@ struct ConfigDirectorProviderTests {
         ))
     }
 
+    @Test func reportsRemovedKeysAsChangedFlags() async {
+        let provider = ConfigDirectorProvider(client: client)
+        await provider.initialize(initialContext: nil).value
+        let events = EventRecorder(provider.observe())
+
+        client.receiveConfigs(["dark-mode"], removedKeys: ["theme", "max-items"])
+
+        let recorded = await events.waitFor(count: 2)
+        #expect(recorded.last == .configurationChanged(
+            ProviderEventDetails(flagsChanged: ["dark-mode", "theme", "max-items"])
+        ))
+    }
+
     @Test func closesTheClient() {
         let provider = ConfigDirectorProvider(client: client)
 

@@ -73,8 +73,8 @@ final class FakeClient: FlagClient {
         continuation.yield(.ready(reason))
     }
 
-    func receiveConfigs(_ keys: [String]) {
-        continuation.yield(.configsUpdated(keys))
+    func receiveConfigs(_ keys: [String], removedKeys: [String] = []) {
+        continuation.yield(.configsUpdated(ConfigsUpdate(keys: keys, removedKeys: removedKeys)))
     }
 
     func initialize(context: ConfigDirectorContext?) async {
