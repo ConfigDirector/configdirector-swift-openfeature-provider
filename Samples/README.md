@@ -44,7 +44,7 @@ _Up to Next Major Version_. In a `Package.swift` it is:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git", from: "1.1.1"),
+    .package(url: "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git", from: "1.2.0"),
     .package(url: "https://github.com/open-feature/swift-sdk.git", from: "0.6.0"),
 ],
 targets: [
