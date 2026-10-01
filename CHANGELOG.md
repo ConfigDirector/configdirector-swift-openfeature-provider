@@ -8,6 +8,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-01
+
 ### Added
 
 - `init(injectedClient:)`, behind `@_spi(Testing)`, creates the provider over a `ConfigDirectorClient`
