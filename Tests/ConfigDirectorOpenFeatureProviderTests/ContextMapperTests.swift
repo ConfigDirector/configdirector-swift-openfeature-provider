@@ -38,6 +38,48 @@ struct ContextMapperTests {
         #expect(ConfigDirectorContext(evaluationContext: context).id == "user-123")
     }
 
+    @Test func mapsATopLevelKindAttributeToTheContextKind() {
+        let context = ImmutableContext(attributes: ["kind": .string("device")])
+            .withTargetingKey("device-42")
+
+        #expect(ConfigDirectorContext(evaluationContext: context) == ConfigDirectorContext(
+            id: "device-42",
+            kind: "device"
+        ))
+    }
+
+    @Test func acceptsAnIntegerKindAttribute() {
+        let context = ImmutableContext(attributes: ["kind": .integer(7)])
+
+        #expect(ConfigDirectorContext(evaluationContext: context).kind == "7")
+    }
+
+    @Test func passesAnEmptyKindAsGiven() {
+        let context = ImmutableContext(attributes: ["kind": .string("")])
+
+        #expect(ConfigDirectorContext(evaluationContext: context) == ConfigDirectorContext(kind: ""))
+    }
+
+    @Test func leavesOutAKindThatIsNotTextOrAnInteger() {
+        let context = ImmutableContext(attributes: ["kind": .boolean(true)])
+
+        #expect(ConfigDirectorContext(evaluationContext: context).kind == nil)
+    }
+
+    @Test func leavesOutTheKindWithoutAKindAttribute() {
+        let context = ImmutableContext(targetingKey: "user-123")
+
+        #expect(ConfigDirectorContext(evaluationContext: context).kind == nil)
+    }
+
+    @Test func keepsAKindInsideTraitsAsATrait() {
+        let context = ImmutableContext(attributes: ["traits": .structure(["kind": .string("device")])])
+
+        #expect(ConfigDirectorContext(evaluationContext: context) == ConfigDirectorContext(
+            traits: ["kind": "device"]
+        ))
+    }
+
     @Test func mapsTheNameTraitsAndAnonymousAttributes() {
         let context = ImmutableContext(attributes: [
             "name": .string("Ada"),

@@ -66,6 +66,29 @@ struct OpenFeatureIntegrationTests {
         #expect(payload.givenContext.name == "Ada")
     }
 
+    @Test func sendsTheKindAttributeAsTheContextKind() async throws {
+        _ = try await registerProvider(initialContext: ImmutableContext(
+            targetingKey: "device-42",
+            structure: ImmutableStructure(attributes: ["kind": .string("device")])
+        ))
+
+        let payload = try #require(server.pollingPayloads.first)
+        #expect(payload.givenContext == ReceivedContext(id: "device-42", kind: "device"))
+    }
+
+    @Test func becomesReadyAndSendsNoContextWhenTheInitialContextHasAnInvalidKind() async throws {
+        _ = try await registerProvider(initialContext: ImmutableContext(
+            targetingKey: "device-42",
+            structure: ImmutableStructure(attributes: [
+                "kind": .string("Device"),
+                "name": .string("Front door"),
+            ])
+        ))
+
+        #expect(api.getProviderStatus() == .ready)
+        #expect(server.pollingPayloads.map(\.givenContext) == [ReceivedContext()])
+    }
+
     @Test func reconcilesAContextChange() async throws {
         _ = try await registerProvider(initialContext: ImmutableContext(targetingKey: "user-123"))
 
@@ -73,6 +96,32 @@ struct OpenFeatureIntegrationTests {
 
         #expect(api.getProviderStatus() == .ready)
         #expect(server.pollingPayloads.map(\.givenContext.id) == ["user-123", "user-456"])
+    }
+
+    @Test func reportsAContextChangeAndSendsNoContextWhenTheNewContextHasAnInvalidKind() async throws {
+        _ = try await registerProvider(initialContext: ImmutableContext(targetingKey: "user-123"))
+        let events = EventRecorder(api.observe())
+
+        await api.setEvaluationContextAndWait(evaluationContext: ImmutableContext(
+            targetingKey: "device-42",
+            structure: ImmutableStructure(attributes: [
+                "kind": .string("Device"),
+                "name": .string("Front door"),
+            ])
+        ))
+
+        let statusEvents = await events.settled().filter { event in
+            if case .configurationChanged = event {
+                return false
+            }
+            return true
+        }
+        #expect(statusEvents == [.ready(), .reconciling(), .contextChanged()])
+        #expect(api.getProviderStatus() == .ready)
+        #expect(server.pollingPayloads.map(\.givenContext) == [
+            ReceivedContext(id: "user-123"),
+            ReceivedContext(),
+        ])
     }
 
     @Test func resolvesABoolean() async throws {

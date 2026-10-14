@@ -14,6 +14,7 @@ extension ConfigDirectorContext {
 
         self.init(
             id: targetingKey.isEmpty ? evaluationContext.getValue(key: "id")?.identifierText : targetingKey,
+            kind: evaluationContext.getValue(key: "kind")?.identifierText,
             name: evaluationContext.getValue(key: "name")?.identifierText,
             traits: traits.isEmpty ? nil : traits.mapValues { TraitValue(JSONValue($0)) },
             isAnonymous: evaluationContext.getValue(key: "anonymous")?.asBoolean()

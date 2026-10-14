@@ -126,8 +126,9 @@ struct ReceivedPayload: Decodable, Sendable {
     var metaContext: ReceivedMetaContext
 }
 
-struct ReceivedContext: Decodable, Sendable {
+struct ReceivedContext: Decodable, Equatable, Sendable {
     var id: String?
+    var kind: String?
     var name: String?
 }
 

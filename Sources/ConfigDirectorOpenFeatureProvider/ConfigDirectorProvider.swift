@@ -24,17 +24,21 @@ import OpenFeature
 ///
 /// ## Evaluation context
 ///
-/// The OpenFeature evaluation context is sent to ConfigDirector as the user's context, and targeting
-/// rules are evaluated against it:
+/// The OpenFeature evaluation context is sent to ConfigDirector as the context, and targeting rules
+/// are evaluated against it:
 ///
 /// | OpenFeature                        | ConfigDirector |
 /// | ---------------------------------- | -------------- |
 /// | the targeting key, or else `id`    | `id`           |
+/// | `kind`                             | `kind`         |
 /// | `name`                             | `name`         |
 /// | `traits`, a structure              | `traits`       |
 /// | `anonymous`, a boolean             | `anonymous`    |
 ///
-/// Any other attribute is ignored. Put the values targeting rules depend on inside `traits`.
+/// Any other attribute is ignored. Put the values targeting rules depend on inside `traits`; a
+/// `kind` inside `traits` is an ordinary trait. Leaving `kind` out means `user`, and a context with
+/// an invalid `kind` is ignored as a whole: the SDK logs an error and flags resolve as if no context
+/// was set.
 ///
 /// ## Provider status
 ///

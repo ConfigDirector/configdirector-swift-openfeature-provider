@@ -8,6 +8,16 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Added
+
+- A top-level `kind` attribute of the evaluation context, beside the targeting key, is sent as the
+  ConfigDirector context kind. It is read the way `id` is: a string as given, an integer as its
+  text, and anything else as no context kind. Leaving it out means `user`, as before, and a `kind`
+  inside `traits` stays an ordinary trait. Initializing or changing the context with an invalid
+  context kind still succeeds and reports ready or a context change, never an error: the SDK logs
+  an error, ignores the whole context, and flags resolve as if no context was set. Requires version
+  1.8.0 of the Swift client SDK, which adds context kinds.
+
 ## [1.2.0] - 2026-10-01
 
 ### Added
