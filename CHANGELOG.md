@@ -8,6 +8,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-15
+
 ### Added
 
 - A top-level `kind` attribute of the evaluation context, beside the targeting key, is sent as the
