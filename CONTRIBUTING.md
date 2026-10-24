@@ -37,6 +37,14 @@ silently skipping a check CI will fail on:
 brew install swiftlint swiftformat
 ```
 
+CI lints with fixed versions, set with their SHA-256 checksums in the `env` of the Lint job in
+[ci.yml](.github/workflows/ci.yml), so a new SwiftFormat or SwiftLint release cannot fail a push on
+its own. Homebrew installs the newest release, which can flag code CI accepts or miss what CI
+flags, so compare `swiftformat --version` and `swiftlint version` with those pins when the hook
+and CI disagree. To move CI to a newer release, change the version and its checksum together,
+taking the checksum from the release's asset on GitHub, and fix what the new release reports in
+the same change.
+
 The sample stage builds the local-override workspace described below, so it has the same
 folder-name requirement: the hook fails at package resolution unless the clone is called
 `configdirector-swift-openfeature-provider`.

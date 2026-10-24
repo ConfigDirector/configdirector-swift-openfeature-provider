@@ -94,9 +94,11 @@ final class StubServer: Sendable {
 
     private static func parse(_ buffered: Data) -> Request? {
         let separator = Data("\r\n\r\n".utf8)
-        guard let headerEnd = buffered.range(of: separator) else { return nil }
+        guard
+            let headerEnd = buffered.range(of: separator),
+            let head = String(bytes: buffered[..<headerEnd.lowerBound], encoding: .utf8)
+        else { return nil }
 
-        guard let head = String(bytes: buffered[..<headerEnd.lowerBound], encoding: .utf8) else { return nil }
         let lines = head.components(separatedBy: "\r\n")
         let requestLine = lines.first?.split(separator: " ") ?? []
         guard requestLine.count >= 2 else { return nil }
