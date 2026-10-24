@@ -38,4 +38,13 @@ final class EventRecorder: Sendable {
         try? await Task.sleep(nanoseconds: 100_000_000)
         return recorded
     }
+
+    func settledStatusEvents() async -> [ProviderEvent] {
+        await settled().filter { event in
+            if case .configurationChanged = event {
+                return false
+            }
+            return true
+        }
+    }
 }

@@ -20,7 +20,9 @@ import OpenFeature
 /// ```
 ///
 /// The provider connects to ConfigDirector when it is registered and evaluates every flag from the
-/// config state it holds locally, so resolving a flag never waits on the network.
+/// config state it holds locally, so resolving a flag never waits on the network. Created with
+/// ``init(options:)`` in `ConnectionMode.offline` mode, it never connects and resolves every flag
+/// from the values it was given.
 ///
 /// ## Evaluation context
 ///
@@ -76,8 +78,11 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     /// `options` configures the underlying ConfigDirector client: application metadata, the
     /// connection mode and timeout, and logging.
     ///
-    /// - Throws: `ConfigDirectorError.missingClientSDKKey` when the key is blank, and
-    ///   `ConfigDirectorError.invalidBaseURL(_:)` when `ConnectionOptions.baseURL` is not absolute.
+    /// - Throws: `ConfigDirectorError.missingClientSDKKey` when the key is blank outside
+    ///   `ConnectionMode.offline` mode, `ConfigDirectorError.invalidBaseURL(_:)` when
+    ///   `ConnectionOptions.baseURL` is not absolute, `ConfigDirectorError.valuesRequireOfflineMode`
+    ///   when `ConnectionOptions.values` is given outside offline mode, and
+    ///   `ConfigDirectorError.invalidOfflineValue(key:)` when one of those values cannot be served.
     public convenience init(
         clientSDKKey: String,
         options: ConfigDirectorClientOptions = ConfigDirectorClientOptions()
@@ -85,6 +90,24 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         try self.init(
             client: ConfigDirectorClient(
                 clientSDKKey: clientSDKKey,
+                options: options,
+                identity: .openFeatureProvider(version: Constants.providerVersion)
+            ),
+            ownsClient: true
+        )
+    }
+
+    /// Creates a provider in `ConnectionMode.offline` mode, which needs no client SDK key. The
+    /// provider never connects to ConfigDirector and resolves every flag to its value in
+    /// `ConnectionOptions.values`, the same for every evaluation context, or to its in-code default
+    /// value when that value is missing or of another type. It is ready as soon as it is registered.
+    ///
+    /// - Throws: `ConfigDirectorError.missingClientSDKKey` when `ConnectionOptions.mode` is not
+    ///   `ConnectionMode.offline`, and `ConfigDirectorError.invalidOfflineValue(key:)` when a value in
+    ///   `ConnectionOptions.values` cannot be served.
+    public convenience init(options: ConfigDirectorClientOptions) throws(ConfigDirectorError) {
+        try self.init(
+            client: ConfigDirectorClient(
                 options: options,
                 identity: .openFeatureProvider(version: Constants.providerVersion)
             ),

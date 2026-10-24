@@ -111,13 +111,7 @@ struct OpenFeatureIntegrationTests {
             ])
         ))
 
-        let statusEvents = await events.settled().filter { event in
-            if case .configurationChanged = event {
-                return false
-            }
-            return true
-        }
-        #expect(statusEvents == [.ready(), .reconciling(), .contextChanged()])
+        #expect(await events.settledStatusEvents() == [.ready(), .reconciling(), .contextChanged()])
         #expect(api.getProviderStatus() == .ready)
         #expect(server.pollingPayloads.map(\.givenContext) == [
             ReceivedContext(id: "user-123"),

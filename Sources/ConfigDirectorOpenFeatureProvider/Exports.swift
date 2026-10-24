@@ -8,3 +8,4 @@
 @_exported import enum ConfigDirector.ConnectionMode
 @_exported import struct ConfigDirector.ConnectionOptions
 @_exported import struct ConfigDirector.ConsoleLogger
+@_exported import enum ConfigDirector.ServedValue

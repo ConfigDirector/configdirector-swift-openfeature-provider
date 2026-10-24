@@ -18,6 +18,16 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
   `CachingProvider` are re-exported, so the `caching` option of `ConfigDirectorClientOptions` can be
   turned off or given a store of your own without importing `ConfigDirector`. Resolutions carry no
   reason, as before. Requires version 1.9.0 of the Swift client SDK, which keeps the values.
+- `init(options:)` creates the provider in `.offline` mode without a client SDK key, and the
+  initializer that takes a key accepts a blank one in that mode. The provider then never connects
+  to ConfigDirector and sends nothing: `setProviderAndWait` returns at once with the provider ready,
+  and every flag resolves to its value in `ConnectionOptions.values`, the same for every evaluation
+  context, or to its in-code default value when that value is missing or of another type. Creating
+  the provider throws `ConfigDirectorError.invalidOfflineValue(key:)` when one of those values
+  cannot be served, and the initializer that takes a key throws `.valuesRequireOfflineMode` when
+  values are given outside `.offline` mode, so the provider is never registered. `ServedValue`, the
+  type of those values, is re-exported. Requires version 1.9.0 of the Swift client SDK, which adds
+  offline mode.
 
 ## [1.3.0] - 2026-10-15
 

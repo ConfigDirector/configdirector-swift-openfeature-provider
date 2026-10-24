@@ -64,6 +64,10 @@ final class StubServer: Sendable {
         listener.cancel()
     }
 
+    var requestPaths: [String] {
+        requests.withLock { $0 }.map(\.path)
+    }
+
     var pollingPayloads: [ReceivedPayload] {
         requests.withLock { $0 }
             .filter { $0.path.hasSuffix("/client/polling/v1") }
