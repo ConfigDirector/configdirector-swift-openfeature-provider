@@ -8,6 +8,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-23
+
 ### Added
 
 - The provider reports the `stale` status while the underlying client serves the values it kept on
