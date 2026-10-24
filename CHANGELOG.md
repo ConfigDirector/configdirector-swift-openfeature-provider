@@ -8,6 +8,17 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Added
+
+- The provider reports the `stale` status while the underlying client serves the values it kept on
+  the device from an earlier launch, from the moment they are loaded until live values arrive and
+  the provider reports `ready`. When the initial connection times out while those values are served,
+  the provider reports `error` and then `stale` again, so `setProviderAndWait` behaves as before and
+  flags resolve to the kept values instead of their default values. `CachingOptions` and
+  `CachingProvider` are re-exported, so the `caching` option of `ConfigDirectorClientOptions` can be
+  turned off or given a store of your own without importing `ConfigDirector`. Resolutions carry no
+  reason, as before. Requires version 1.9.0 of the Swift client SDK, which keeps the values.
+
 ## [1.3.0] - 2026-10-15
 
 ### Added

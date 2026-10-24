@@ -1,3 +1,5 @@
+@_exported import struct ConfigDirector.CachingOptions
+@_exported import protocol ConfigDirector.CachingProvider
 @_exported import struct ConfigDirector.ConfigDirectorClientOptions
 @_exported import enum ConfigDirector.ConfigDirectorError
 @_exported import protocol ConfigDirector.ConfigDirectorLogger

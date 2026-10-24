@@ -73,6 +73,10 @@ final class FakeClient: FlagClient {
         continuation.yield(.ready(reason))
     }
 
+    func loadCachedValues() {
+        continuation.yield(.cachedValuesLoaded)
+    }
+
     func receiveConfigs(_ keys: [String], removedKeys: [String] = []) {
         continuation.yield(.configsUpdated(ConfigsUpdate(keys: keys, removedKeys: removedKeys)))
     }

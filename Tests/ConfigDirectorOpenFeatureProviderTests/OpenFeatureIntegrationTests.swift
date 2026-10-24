@@ -30,6 +30,7 @@ struct OpenFeatureIntegrationTests {
             clientSDKKey: "sdk-key",
             options: ConfigDirectorClientOptions(
                 connection: ConnectionOptions(mode: .polling, timeout: 5, baseURL: server.baseURL),
+                caching: CachingOptions(enabled: false),
                 logger: ConsoleLogger(level: .off)
             )
         )

@@ -47,6 +47,11 @@ import OpenFeature
 /// trying to connect, and the provider reports ready as soon as it succeeds. Until then flags
 /// resolve to the config state received earlier, or to their default values when there is none.
 ///
+/// On a launch after one that received config state, the client serves the values it kept on the
+/// device until live values arrive; see `ConfigDirectorClientOptions.caching`. The provider reports
+/// the stale status from the moment those values are loaded, and again after the error a timeout
+/// reports, until live values make the client ready.
+///
 /// A configuration-changed event is emitted every time config state arrives, carrying the keys of
 /// the configs in the update followed by the keys of configs a full update removed.
 ///
@@ -56,6 +61,7 @@ import OpenFeature
 public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     private struct State {
         var isAwaitingRecovery = false
+        var isServingCachedValues = false
         var isClosed = false
         var listener: Task<Void, Never>?
     }
@@ -249,6 +255,12 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
 
         state.withLock { $0.isAwaitingRecovery = true }
         send(.error(ProviderEventDetails(message: failureMessage, errorCode: .general)))
+        switch FailureReport.decide(isServingCachedValues: state.withLock(\.isServingCachedValues)) {
+        case .errorThenStale:
+            send(.stale())
+        case .error:
+            break
+        }
 
         if client.isReady {
             recover()
@@ -261,14 +273,25 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
             recover()
         case let .configsUpdated(update):
             send(.configurationChanged(ProviderEventDetails(flagsChanged: update.keys + update.removedKeys)))
+        case .cachedValuesLoaded:
+            serveCachedValues()
         case .contextUpdated:
             break
         }
     }
 
+    private func serveCachedValues() {
+        guard !client.isReady else { return }
+        state.withLock { $0.isServingCachedValues = true }
+        send(.stale())
+    }
+
     private func recover() {
         let wasAwaitingRecovery = state.withLock { state -> Bool in
-            defer { state.isAwaitingRecovery = false }
+            defer {
+                state.isAwaitingRecovery = false
+                state.isServingCachedValues = false
+            }
             return state.isAwaitingRecovery
         }
 
@@ -279,6 +302,15 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     private func send(_ event: ProviderEvent) {
         guard !state.withLock(\.isClosed) else { return }
         statusTracker.send(event)
+    }
+}
+
+private enum FailureReport {
+    case error
+    case errorThenStale
+
+    static func decide(isServingCachedValues: Bool) -> FailureReport {
+        isServingCachedValues ? .errorThenStale : .error
     }
 }
 
