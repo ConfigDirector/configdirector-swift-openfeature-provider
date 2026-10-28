@@ -20,6 +20,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
   The application still receives its in-code default value, now with the error code in its details.
   With an OpenFeature logger set, the OpenFeature Swift SDK also logs an error for each of these
   reads.
+- The error the provider reports when initialization does not finish in time now says that flags
+  resolve to their in-code default values.
 
 ### Fixed
 

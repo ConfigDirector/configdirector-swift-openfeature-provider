@@ -47,7 +47,8 @@ import OpenFeature
 /// The provider is ready once ConfigDirector has delivered config state. When that does not happen
 /// within `ConnectionOptions.timeout`, the provider reports an error. The underlying client keeps
 /// trying to connect, and the provider reports ready as soon as it succeeds. Until then flags
-/// resolve to the config state received earlier, or to their default values when there is none.
+/// resolve to the config state received earlier, or to their in-code default values when there is
+/// none.
 ///
 /// On a launch after one that received config state, the client serves the values it kept on the
 /// device until live values arrive; see `ConfigDirectorClientOptions.caching`. The provider reports

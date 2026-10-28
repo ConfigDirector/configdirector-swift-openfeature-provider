@@ -17,8 +17,8 @@ enum LifecycleCall {
         switch self {
         case .initialization:
             """
-            ConfigDirector did not become ready during initialization. Flags resolve to their default \
-            values until the connection succeeds.
+            ConfigDirector did not become ready during initialization. Flags resolve to their in-code \
+            default values until the connection succeeds.
             """
         case .contextUpdate:
             """
