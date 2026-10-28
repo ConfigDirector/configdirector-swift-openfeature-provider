@@ -62,9 +62,10 @@ import OpenFeature
 /// closing it, create a new one.
 public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     private struct State {
+        var lifecycleReporting = LifecycleReporting()
+        var latestLifecycleTask: Task<Void, Never>?
         var isAwaitingRecovery = false
         var isServingCachedValues = false
-        var isClosed = false
         var listener: Task<Void, Never>?
     }
 
@@ -72,6 +73,7 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     private let ownsClient: Bool
     private let statusTracker = ProviderStatusTracker()
     private let state = Locked(State())
+    private let isClosed = Locked(false)
 
     /// Creates a provider for `clientSDKKey`, the client SDK key from the ConfigDirector dashboard.
     ///
@@ -165,16 +167,8 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     public func initialize(initialContext: (any EvaluationContext)?) -> Future<Void, Never> {
         let context = ConfigDirectorContext(evaluationContext: initialContext)
 
-        return lifecycle { [self] in
-            state.withLock { $0.isAwaitingRecovery = false }
+        return lifecycle(.initialization) { [self] in
             await client.initialize(context: context)
-            reportOutcome(
-                success: .ready(),
-                failureMessage: """
-                ConfigDirector did not become ready during initialization. Flags resolve to their \
-                default values until the connection succeeds.
-                """
-            )
         }
     }
 
@@ -184,17 +178,8 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     ) -> Future<Void, Never> {
         let context = ConfigDirectorContext(evaluationContext: newContext)
 
-        return lifecycle { [self] in
-            state.withLock { $0.isAwaitingRecovery = false }
-            send(.reconciling())
+        return lifecycle(.contextUpdate) { [self] in
             await client.updateContext(context)
-            reportOutcome(
-                success: .contextChanged(),
-                failureMessage: """
-                ConfigDirector did not become ready after the context changed. Flags resolve against \
-                the previous context until the connection succeeds.
-                """
-            )
         }
     }
 
@@ -248,53 +233,85 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     /// `OpenFeatureAPI.shared.clearProvider()`. The provider cannot be used afterwards. A client the
     /// provider was given through ``init(injectedClient:)`` stays open.
     public func close() {
-        let listener = state.withLock { state -> Task<Void, Never>? in
-            guard !state.isClosed else { return nil }
-            state.isClosed = true
-            return state.listener
+        let wasClosed = isClosed.withLock { isClosed in
+            defer { isClosed = true }
+            return isClosed
         }
+        guard !wasClosed else { return }
 
-        guard let listener else { return }
-        listener.cancel()
+        state.withLock(\.listener)?.cancel()
         if ownsClient {
             client.close()
         }
     }
 
-    private func lifecycle(_ work: @escaping @Sendable () async -> Void) -> Future<Void, Never> {
-        Future { promise in
+    private func lifecycle(
+        _ call: LifecycleCall,
+        connect: @escaping @Sendable () async -> Void
+    ) -> Future<Void, Never> {
+        Future { [self] promise in
             nonisolated(unsafe) let promise = promise
-            Task {
-                await work()
-                promise(.success(()))
+            state.withLock { state in
+                state.isAwaitingRecovery = false
+                let number = state.lifecycleReporting.numberNextCall()
+                if let startEvent = call.startEvent {
+                    send(startEvent)
+                }
+
+                let previousTask = state.latestLifecycleTask
+                state.latestLifecycleTask = Task {
+                    await previousTask?.value
+                    await connect()
+                    reportOutcome(of: call, numbered: number)
+                    promise(.success(()))
+                }
             }
         }
     }
 
-    private func reportOutcome(success: ProviderEvent, failureMessage: String) {
-        if client.isReady {
-            send(success)
-            return
+    private func reportOutcome(of call: LifecycleCall, numbered number: Int) {
+        state.withLock { state in
+            let outcome = state.lifecycleReporting.outcome(
+                of: call,
+                numbered: number,
+                isClientReady: client.isReady
+            )
+            switch outcome {
+            case .overtakenByALaterCall:
+                break
+            case .ready:
+                send(.ready())
+            case .contextChanged:
+                send(.contextChanged())
+            case .readyThenContextChanged:
+                send(.ready())
+                send(.contextChanged())
+            case .error:
+                reportFailure(message: call.failureMessage, state: &state)
+            }
         }
+    }
 
-        state.withLock { $0.isAwaitingRecovery = true }
-        send(.error(ProviderEventDetails(message: failureMessage, errorCode: .general)))
-        switch FailureReport.decide(isServingCachedValues: state.withLock(\.isServingCachedValues)) {
+    private func reportFailure(message: String, state: inout State) {
+        state.isAwaitingRecovery = true
+        send(.error(ProviderEventDetails(message: message, errorCode: .general)))
+        switch FailureReport.decide(isServingCachedValues: state.isServingCachedValues) {
         case .errorThenStale:
             send(.stale())
         case .error:
             break
         }
 
-        if client.isReady {
-            recover()
-        }
+        recoverIfTheClientIsReady(state: &state)
     }
 
     private func handle(_ event: ClientEvent) {
         switch event {
         case .ready:
-            recover()
+            state.withLock { state in
+                state.isServingCachedValues = false
+                recoverIfTheClientIsReady(state: &state)
+            }
         case let .configsUpdated(update):
             send(.configurationChanged(ProviderEventDetails(flagsChanged: update.keys + update.removedKeys)))
         case .cachedValuesLoaded:
@@ -305,26 +322,25 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
     }
 
     private func serveCachedValues() {
-        guard !client.isReady else { return }
-        state.withLock { $0.isServingCachedValues = true }
-        send(.stale())
+        state.withLock { state in
+            guard !client.isReady else { return }
+            state.isServingCachedValues = true
+            send(.stale())
+        }
     }
 
-    private func recover() {
-        let wasAwaitingRecovery = state.withLock { state -> Bool in
-            defer {
-                state.isAwaitingRecovery = false
-                state.isServingCachedValues = false
-            }
-            return state.isAwaitingRecovery
-        }
+    private func recoverIfTheClientIsReady(state: inout State) {
+        guard client.isReady else { return }
 
+        let wasAwaitingRecovery = state.isAwaitingRecovery
+        state.isAwaitingRecovery = false
+        state.isServingCachedValues = false
         guard wasAwaitingRecovery else { return }
         send(.ready())
     }
 
     private func send(_ event: ProviderEvent) {
-        guard !state.withLock(\.isClosed) else { return }
+        guard !isClosed.withLock({ $0 }) else { return }
         statusTracker.send(event)
     }
 }

@@ -15,6 +15,18 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
   value, such as `42`, `"text"`, `true` or `null`, gives the in-code default value. Before, it
   reached the app as the flag's value, `Value.integer(42)` for `42`. With an in-code default value
   of any other kind, the flag still resolves to whatever JSON the config holds.
+- When the app sets the evaluation context again before the previous update has finished, or right
+  after registering the provider, the provider reports only the outcome of the last update. Before,
+  an earlier update could report `error` even though every connection succeeded, or report
+  `contextChanged` while a later update was still reconciling. An app that sets the context right
+  after registering the provider still receives `ready`, followed by `contextChanged`.
+- The provider updates the client's context in the order the app set it. Before, when the app set
+  the context right after registering the provider, the client could connect with the new context
+  before the initial one and end up evaluating flags for the initial context while the provider
+  reported `ready`.
+- After a context update fails, the provider reports `ready` again only once the client is ready.
+  Before, config state that arrived for an earlier connection could make it report `ready` while
+  flags still resolved against the previous context.
 
 ## [1.4.0] - 2026-10-23
 

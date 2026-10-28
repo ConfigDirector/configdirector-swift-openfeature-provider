@@ -87,6 +87,28 @@ struct ConfigDirectorProviderCachedValuesTests {
         #expect(provider.status == .error)
     }
 
+    @Test func reportsAnErrorWithoutStaleWhenLiveValuesArrivedAsAnotherConnectionStarted() async {
+        client.failConnections()
+        let provider = ConfigDirectorProvider(client: client, ownsClient: true)
+        client.loadCachedValues()
+        await provider.initialize(initialContext: nil).value
+        #expect(await waitUntil { provider.status == .stale })
+        let events = EventRecorder(provider.observe())
+        client.deliverLateReadyEvent(.initialization)
+        client.receiveConfigs(["dark-mode"])
+        _ = await events.waitFor(count: 2)
+
+        await provider.onContextSet(oldContext: nil, newContext: ImmutableContext(targetingKey: "user-2"))
+            .value
+
+        let recorded = await events.settledStatusEvents()
+        guard case .error = recorded.last else {
+            Issue.record("Expected the error to be the last event, got \(recorded)")
+            return
+        }
+        #expect(provider.status == .error)
+    }
+
     @Test func reportsStaleAgainWhenAContextChangeCannotConnectWhileServingTheKeptValues() async {
         client.failConnections()
         let provider = ConfigDirectorProvider(client: client, ownsClient: true)

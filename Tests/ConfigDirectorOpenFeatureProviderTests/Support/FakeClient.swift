@@ -6,6 +6,9 @@ final class FakeClient: FlagClient {
         var isReady = false
         var scriptedReadiness: [Bool] = []
         var becomesReadyOnConnect = true
+        var scriptedConnectionsBecomingReady: [Bool] = []
+        var isConnecting = false
+        var queuedConnections: [CheckedContinuation<Void, Never>] = []
         var isHoldingConnections = false
         var heldConnections: [CheckedContinuation<Void, Never>] = []
         var initializedContexts: [ConfigDirectorContext?] = []
@@ -68,8 +71,16 @@ final class FakeClient: FlagClient {
         state.withLock { $0.scriptedReadiness = answers }
     }
 
+    func scriptConnections(becomingReady outcomes: [Bool]) {
+        state.withLock { $0.scriptedConnectionsBecomingReady = outcomes }
+    }
+
     func becomeReady(_ reason: ConnectReason) {
         state.withLock { $0.isReady = true }
+        continuation.yield(.ready(reason))
+    }
+
+    func deliverLateReadyEvent(_ reason: ConnectReason) {
         continuation.yield(.ready(reason))
     }
 
@@ -109,6 +120,7 @@ final class FakeClient: FlagClient {
     }
 
     private func connect(reason: ConnectReason) async {
+        await startConnection()
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
             let isHeld = state.withLock { state -> Bool in
                 guard state.isHoldingConnections else { return false }
@@ -120,10 +132,43 @@ final class FakeClient: FlagClient {
             }
         }
 
-        if state.withLock(\.becomesReadyOnConnect) {
-            becomeReady(reason)
-        } else {
-            state.withLock { $0.isReady = false }
+        let becomesReady = state.withLock { state in
+            state.scriptedConnectionsBecomingReady.isEmpty
+                ? state.becomesReadyOnConnect
+                : state.scriptedConnectionsBecomingReady.removeFirst()
         }
+        if becomesReady {
+            becomeReady(reason)
+        }
+        startNextConnection()
+    }
+
+    private func startConnection() async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let isQueued = state.withLock { state -> Bool in
+                guard !state.isConnecting else {
+                    state.queuedConnections.append(continuation)
+                    return true
+                }
+                state.isConnecting = true
+                state.isReady = false
+                return false
+            }
+            if !isQueued {
+                continuation.resume()
+            }
+        }
+    }
+
+    private func startNextConnection() {
+        let next = state.withLock { state -> CheckedContinuation<Void, Never>? in
+            guard !state.queuedConnections.isEmpty else {
+                state.isConnecting = false
+                return nil
+            }
+            state.isReady = false
+            return state.queuedConnections.removeFirst()
+        }
+        next?.resume()
     }
 }
