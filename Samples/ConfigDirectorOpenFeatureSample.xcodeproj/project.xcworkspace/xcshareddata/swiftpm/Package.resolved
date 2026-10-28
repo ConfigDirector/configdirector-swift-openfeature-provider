@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ConfigDirector/configdirector-swift-openfeature-provider.git",
       "state" : {
-        "revision" : "cc982ecd58c3acb584bae5344c44ec8a7773b22b",
-        "version" : "1.4.0"
+        "revision" : "3a5cf5f1dcd8722f58bb0672c976814609b143db",
+        "version" : "1.5.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ConfigDirector/configdirector-swift-sdk.git",
       "state" : {
-        "revision" : "c713162c471a69f246ed9880f5dc4eb26062b10c",
-        "version" : "1.9.0"
+        "revision" : "ed746236867010ef6a77cddb94fa36fa9d8b8611",
+        "version" : "1.10.0"
       }
     },
     {
