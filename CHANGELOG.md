@@ -8,6 +8,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-27
+
 ### Added
 
 - Evaluation details now carry the reason and the variant, and values kept on the device report the
