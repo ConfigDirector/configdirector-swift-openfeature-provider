@@ -8,6 +8,14 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Fixed
+
+- `getObjectValue` with a structure as the in-code default value now resolves to the config's value
+  only when that value is a JSON object, and with a list only when it is a JSON list. Any other
+  value, such as `42`, `"text"`, `true` or `null`, gives the in-code default value. Before, it
+  reached the app as the flag's value, `Value.integer(42)` for `42`. With an in-code default value
+  of any other kind, the flag still resolves to whatever JSON the config holds.
+
 ## [1.4.0] - 2026-10-23
 
 ### Added

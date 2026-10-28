@@ -236,8 +236,9 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<Value> {
         let fallback = JSONValue(defaultValue)
-        let resolved = client.value(for: key, as: JSONValue.self, default: fallback)
-        return ProviderEvaluation(value: resolved == fallback ? defaultValue : resolved.openFeatureValue)
+        let servedValue = client.value(for: key, as: JSONValue.self, default: fallback)
+        let resolvesToTheDefault = servedValue == fallback || !servedValue.fitsTheShape(of: fallback)
+        return ProviderEvaluation(value: resolvesToTheDefault ? defaultValue : servedValue.openFeatureValue)
     }
 
     /// Closes the connection to ConfigDirector and stops emitting provider events.

@@ -16,6 +16,8 @@ struct OpenFeatureIntegrationTests {
             #"{"primaryColor":"blue","cornerRadius":8,"scale":1.5,"tags":["a",null]}"#
         ),
         ServedConfig("no-value", "string", nil),
+        ServedConfig("bare-limit", "json", "42"),
+        ServedConfig("regions", "json", #"["eu","us"]"#),
     ]
 
     private let server: StubServer
@@ -185,6 +187,40 @@ struct OpenFeatureIntegrationTests {
         #expect(client.getBooleanValue(key: "welcome-message", defaultValue: true) == true)
         #expect(client.getIntegerValue(key: "welcome-message", defaultValue: 7) == 7)
         #expect(client.getObjectValue(key: "welcome-message", defaultValue: .null) == .null)
+    }
+
+    @Test func resolvesAnObjectFlagToTheDefaultObjectWhenTheConfigHoldsANumber() async throws {
+        let client = try await registerProvider()
+        let fallback = Value.structure(["max": .integer(1)])
+
+        #expect(client.getObjectValue(key: "bare-limit", defaultValue: fallback) == fallback)
+    }
+
+    @Test func resolvesAListFlagToTheDefaultListWhenTheConfigHoldsAnObject() async throws {
+        let client = try await registerProvider()
+        let fallback = Value.list([.string("eu")])
+
+        #expect(client.getObjectValue(key: "theme", defaultValue: fallback) == fallback)
+    }
+
+    @Test func resolvesAnObjectFlagWithAnObjectDefaultToTheServedObject() async throws {
+        let client = try await registerProvider()
+
+        #expect(client.getObjectValue(key: "theme", defaultValue: .structure([:])) == .structure([
+            "primaryColor": .string("blue"),
+            "cornerRadius": .integer(8),
+            "scale": .double(1.5),
+            "tags": .list([.string("a"), .null]),
+        ]))
+    }
+
+    @Test func resolvesAListFlagWithAListDefaultToTheServedList() async throws {
+        let client = try await registerProvider()
+
+        #expect(client.getObjectValue(key: "regions", defaultValue: .list([])) == .list([
+            .string("eu"),
+            .string("us"),
+        ]))
     }
 
     @Test func resolvesToTheExactDefaultObjectIncludingValuesJSONCannotHold() async throws {

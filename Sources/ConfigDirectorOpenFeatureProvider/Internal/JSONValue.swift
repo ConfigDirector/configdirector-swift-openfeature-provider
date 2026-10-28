@@ -36,6 +36,14 @@ extension JSONValue {
         case .null: .null
         }
     }
+
+    func fitsTheShape(of defaultValue: JSONValue) -> Bool {
+        switch (defaultValue, self) {
+        case (.object, .object), (.array, .array): true
+        case (.object, _), (.array, _): false
+        case (.bool, _), (.integer, _), (.double, _), (.string, _), (.null, _): true
+        }
+    }
 }
 
 extension JSONValue: Decodable {
