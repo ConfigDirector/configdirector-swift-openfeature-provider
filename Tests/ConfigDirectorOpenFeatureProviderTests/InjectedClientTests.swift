@@ -105,7 +105,9 @@ struct InjectedClientTests {
         let initialization = provider.initialize(initialContext: nil)
         #expect(await waitUntil { testClient.client.isInitializing })
         #expect(provider.status == .notReady)
-        #expect(try darkMode(of: provider) == false)
+        #expect(throws: OpenFeatureError.providerNotReadyError) {
+            try darkMode(of: provider)
+        }
 
         testClient.completeInitialization()
         await initialization.value
@@ -137,7 +139,12 @@ struct InjectedClientTests {
         await api.setProviderAndWait(provider: ConfigDirectorProvider(injectedClient: testClient.client))
 
         #expect(api.getProviderStatus() == .error)
-        #expect(api.getClient().getBooleanValue(key: "dark-mode", defaultValue: false) == false)
+
+        let details = api.getClient().getBooleanDetails(key: "dark-mode", defaultValue: false)
+
+        #expect(details.value == false)
+        #expect(details.errorCode == .providerNotReady)
+        #expect(details.reason == "error")
     }
 }
 

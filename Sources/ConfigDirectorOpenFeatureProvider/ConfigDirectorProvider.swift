@@ -188,7 +188,7 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         defaultValue: Bool,
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<Bool> {
-        ProviderEvaluation(value: client.value(for: key, default: defaultValue))
+        try client.evaluateFlag(key, default: defaultValue).providerEvaluation()
     }
 
     public func getStringEvaluation(
@@ -196,7 +196,7 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         defaultValue: String,
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<String> {
-        ProviderEvaluation(value: client.value(for: key, default: defaultValue))
+        try client.evaluateFlag(key, default: defaultValue).providerEvaluation()
     }
 
     public func getIntegerEvaluation(
@@ -204,7 +204,9 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         defaultValue: Int64,
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<Int64> {
-        ProviderEvaluation(value: client.value(for: key, default: Int64ConfigValue(defaultValue)).rawValue)
+        try client.evaluateFlag(key, default: Int64ConfigValue(defaultValue))
+            .mapValue(\.rawValue)
+            .providerEvaluation()
     }
 
     public func getDoubleEvaluation(
@@ -212,7 +214,7 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         defaultValue: Double,
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<Double> {
-        ProviderEvaluation(value: client.value(for: key, default: defaultValue))
+        try client.evaluateFlag(key, default: defaultValue).providerEvaluation()
     }
 
     public func getObjectEvaluation(
@@ -220,10 +222,10 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         defaultValue: Value,
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<Value> {
-        let fallback = JSONValue(defaultValue)
-        let servedValue = client.value(for: key, as: JSONValue.self, default: fallback)
-        let resolvesToTheDefault = servedValue == fallback || !servedValue.fitsTheShape(of: fallback)
-        return ProviderEvaluation(value: resolvesToTheDefault ? defaultValue : servedValue.openFeatureValue)
+        let inCodeDefaultJSON = JSONValue(defaultValue)
+        return try client.evaluateFlag(key, as: JSONValue.self, default: inCodeDefaultJSON)
+            .objectFlagEvaluation(inCodeDefaultValue: defaultValue, inCodeDefaultJSON: inCodeDefaultJSON)
+            .providerEvaluation()
     }
 
     /// Closes the connection to ConfigDirector and stops emitting provider events.

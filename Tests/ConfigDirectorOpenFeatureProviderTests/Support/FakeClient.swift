@@ -2,6 +2,11 @@ import ConfigDirector
 @testable import ConfigDirectorOpenFeatureProvider
 
 final class FakeClient: FlagClient {
+    private struct ScriptedEvaluation {
+        var reason = EvaluationReason.valueMissing
+        var valueID: String?
+    }
+
     private struct State {
         var isReady = false
         var scriptedReadiness: [Bool] = []
@@ -14,6 +19,7 @@ final class FakeClient: FlagClient {
         var initializedContexts: [ConfigDirectorContext?] = []
         var updatedContexts: [ConfigDirectorContext] = []
         var closeCount = 0
+        var scriptedEvaluation = ScriptedEvaluation()
     }
 
     private let state = Locked(State())
@@ -88,6 +94,10 @@ final class FakeClient: FlagClient {
         continuation.yield(.cachedValuesLoaded)
     }
 
+    func scriptEvaluations(reason: EvaluationReason, valueID: String?) {
+        state.withLock { $0.scriptedEvaluation = ScriptedEvaluation(reason: reason, valueID: valueID) }
+    }
+
     func receiveConfigs(_ keys: [String], removedKeys: [String] = []) {
         continuation.yield(.configsUpdated(ConfigsUpdate(keys: keys, removedKeys: removedKeys)))
     }
@@ -102,21 +112,37 @@ final class FakeClient: FlagClient {
         await connect(reason: .contextUpdate)
     }
 
-    func value<Value: ConfigValue>(for _: String, default defaultValue: Value) -> Value {
-        defaultValue
+    func evaluateFlag<Value: ConfigValue>(
+        _ key: String,
+        default defaultValue: Value
+    ) -> FlagEvaluation<Value> {
+        scriptedEvaluation(of: key, default: defaultValue)
     }
 
-    func value<Value: Decodable & Sendable>(
-        for _: String,
+    func evaluateFlag<Value: Decodable & Sendable>(
+        _ key: String,
         as _: Value.Type,
         default defaultValue: Value
-    ) -> Value {
-        defaultValue
+    ) -> FlagEvaluation<Value> {
+        scriptedEvaluation(of: key, default: defaultValue)
     }
 
     func close() {
         state.withLock { $0.closeCount += 1 }
         continuation.finish()
+    }
+
+    private func scriptedEvaluation<Value>(
+        of key: String,
+        default defaultValue: Value
+    ) -> FlagEvaluation<Value> {
+        let scripted = state.withLock(\.scriptedEvaluation)
+        return FlagEvaluation(
+            key: key,
+            value: defaultValue,
+            valueID: scripted.valueID,
+            reason: scripted.reason
+        )
     }
 
     private func connect(reason: ConnectReason) async {

@@ -18,6 +18,8 @@ struct OpenFeatureIntegrationTests {
         ServedConfig("no-value", "string", nil),
         ServedConfig("bare-limit", "json", "42"),
         ServedConfig("regions", "json", #"["eu","us"]"#),
+        ServedConfig("broken-theme", "json", "{oops"),
+        ServedConfig("no-theme", "json", nil),
     ]
 
     private let server: StubServer
@@ -121,10 +123,15 @@ struct OpenFeatureIntegrationTests {
         ])
     }
 
-    @Test func resolvesABoolean() async throws {
+    @Test func resolvesABooleanWithTheTargetingMatchReasonAndTheValueID() async throws {
         let client = try await registerProvider()
 
-        #expect(client.getBooleanValue(key: "dark-mode", defaultValue: false) == true)
+        let details = client.getBooleanDetails(key: "dark-mode", defaultValue: false)
+
+        #expect(details.value == true)
+        #expect(details.reason == "TARGETING_MATCH")
+        #expect(details.variant == "dark-mode-value")
+        #expect(details.errorCode == nil)
     }
 
     @Test func resolvesAString() async throws {
@@ -168,39 +175,89 @@ struct OpenFeatureIntegrationTests {
         ]))
     }
 
-    @Test func resolvesToTheDefaultValueWhenThereIsNoConfig() async throws {
+    @Test func resolvesToTheDefaultValueWithFlagNotFoundWhenThereIsNoConfig() async throws {
         let client = try await registerProvider()
 
         #expect(client.getStringValue(key: "missing", defaultValue: "fallback") == "fallback")
-        #expect(client.getIntegerValue(key: "missing", defaultValue: 7) == 7)
+
+        let details = client.getIntegerDetails(key: "missing", defaultValue: 7)
+
+        #expect(details.value == 7)
+        #expect(details.errorCode == .flagNotFound)
+        #expect(details.reason == "error")
     }
 
-    @Test func resolvesToTheDefaultValueWhenTheConfigHasNoValue() async throws {
+    @Test func resolvesToTheDefaultValueWithTheDefaultReasonWhenTheConfigHasNoValue() async throws {
         let client = try await registerProvider()
 
-        #expect(client.getStringValue(key: "no-value", defaultValue: "fallback") == "fallback")
+        let details = client.getStringDetails(key: "no-value", defaultValue: "fallback")
+
+        #expect(details.value == "fallback")
+        #expect(details.reason == "DEFAULT")
+        #expect(details.variant == nil)
+        #expect(details.errorCode == nil)
     }
 
-    @Test func resolvesToTheDefaultValueWhenTheTypeDoesNotMatch() async throws {
+    @Test func resolvesToTheDefaultValueWithTypeMismatchWhenAStringConfigDoesNotSpellABoolean() async throws {
         let client = try await registerProvider()
 
-        #expect(client.getBooleanValue(key: "welcome-message", defaultValue: true) == true)
-        #expect(client.getIntegerValue(key: "welcome-message", defaultValue: 7) == 7)
-        #expect(client.getObjectValue(key: "welcome-message", defaultValue: .null) == .null)
+        let details = client.getBooleanDetails(key: "welcome-message", defaultValue: true)
+
+        #expect(details.value == true)
+        #expect(details.errorCode == .typeMismatch)
+        #expect(details.reason == "error")
     }
 
-    @Test func resolvesAnObjectFlagToTheDefaultObjectWhenTheConfigHoldsANumber() async throws {
+    @Test func resolvesToTheDefaultValueWithTypeMismatchWhenAStringConfigDoesNotSpellANumber() async throws {
+        let client = try await registerProvider()
+
+        let details = client.getIntegerDetails(key: "welcome-message", defaultValue: 7)
+
+        #expect(details.value == 7)
+        #expect(details.errorCode == .typeMismatch)
+        #expect(details.reason == "error")
+    }
+
+    @Test func resolvesToTheDefaultValueWithTypeMismatchWhenAStringConfigIsReadAsAnObject() async throws {
+        let client = try await registerProvider()
+
+        let details = client.getObjectDetails(key: "welcome-message", defaultValue: .null)
+
+        #expect(details.value == .null)
+        #expect(details.errorCode == .typeMismatch)
+        #expect(details.reason == "error")
+    }
+
+    @Test func resolvesToTheDefaultValueWithTypeMismatchWhenAJSONConfigDoesNotParse() async throws {
+        let client = try await registerProvider()
+
+        let details = client.getObjectDetails(key: "broken-theme", defaultValue: .null)
+
+        #expect(details.value == .null)
+        #expect(details.errorCode == .typeMismatch)
+        #expect(details.reason == "error")
+    }
+
+    @Test func resolvesAnObjectFlagToItsDefaultWithTypeMismatchWhenTheConfigHoldsANumber() async throws {
         let client = try await registerProvider()
         let fallback = Value.structure(["max": .integer(1)])
 
-        #expect(client.getObjectValue(key: "bare-limit", defaultValue: fallback) == fallback)
+        let details = client.getObjectDetails(key: "bare-limit", defaultValue: fallback)
+
+        #expect(details.value == fallback)
+        #expect(details.errorCode == .typeMismatch)
+        #expect(details.reason == "error")
     }
 
-    @Test func resolvesAListFlagToTheDefaultListWhenTheConfigHoldsAnObject() async throws {
+    @Test func resolvesAListFlagToItsDefaultWithTypeMismatchWhenTheConfigHoldsAnObject() async throws {
         let client = try await registerProvider()
         let fallback = Value.list([.string("eu")])
 
-        #expect(client.getObjectValue(key: "theme", defaultValue: fallback) == fallback)
+        let details = client.getObjectDetails(key: "theme", defaultValue: fallback)
+
+        #expect(details.value == fallback)
+        #expect(details.errorCode == .typeMismatch)
+        #expect(details.reason == "error")
     }
 
     @Test func resolvesAnObjectFlagWithAnObjectDefaultToTheServedObject() async throws {
@@ -228,5 +285,43 @@ struct OpenFeatureIntegrationTests {
         let fallback = Value.structure(["since": .date(Date(timeIntervalSince1970: 1_700_000_000))])
 
         #expect(client.getObjectValue(key: "missing", defaultValue: fallback) == fallback)
+    }
+
+    @Test func resolvesToTheExactDefaultObjectWhenTheConfigHasNoValue() async throws {
+        let client = try await registerProvider()
+        let fallback = Value.structure(["since": .date(Date(timeIntervalSince1970: 1_700_000_000))])
+
+        let details = client.getObjectDetails(key: "no-theme", defaultValue: fallback)
+
+        #expect(details.value == fallback)
+        #expect(details.reason == "DEFAULT")
+    }
+
+    @Test func runsAnAfterHookWithTheTargetingMatchReasonAndTheValueID() async throws {
+        let client = try await registerProvider()
+        let hook = RecordingHook<Bool>()
+        api.addHooks(hooks: hook)
+
+        _ = client.getBooleanValue(key: "dark-mode", defaultValue: false)
+
+        #expect(hook.afterDetails.count == 1)
+        let details = try #require(hook.afterDetails.first)
+        #expect(details.reason == "TARGETING_MATCH")
+        #expect(details.variant == "dark-mode-value")
+    }
+
+    @Test func runsAnErrorHookWhenThereIsNoConfig() async throws {
+        let client = try await registerProvider()
+        let hook = RecordingHook<String>()
+        api.addHooks(hooks: hook)
+
+        _ = client.getStringValue(key: "missing", defaultValue: "fallback")
+
+        #expect(hook.errors == [.flagNotFoundError(key: "missing")])
+        #expect(hook.afterDetails.isEmpty)
+        let details = try #require(hook.finallyDetails.first)
+        #expect(details.value == "fallback")
+        #expect(details.errorCode == .flagNotFound)
+        #expect(details.reason == "error")
     }
 }

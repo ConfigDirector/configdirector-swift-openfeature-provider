@@ -8,6 +8,19 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Added
+
+- Evaluation details now carry the reason and the variant, and values kept on the device report the
+  `CACHED` reason. Requires version 1.10.0 of the Swift client SDK.
+
+### Changed
+
+- A config that does not exist, a value of another type and an evaluation before values arrive now
+  throw the matching OpenFeature error inside the provider, so OpenFeature error hooks run for them.
+  The application still receives its in-code default value, now with the error code in its details.
+  With an OpenFeature logger set, the OpenFeature Swift SDK also logs an error for each of these
+  reads.
+
 ### Fixed
 
 - `getObjectValue` with a structure as the in-code default value now resolves to the config's value

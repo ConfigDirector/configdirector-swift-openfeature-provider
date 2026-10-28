@@ -3,8 +3,6 @@ import ConfigDirector
 import OpenFeature
 import Testing
 
-/// The provider reports the stale status while the client serves the values kept on the device,
-/// from the moment they are loaded until live values make the client ready.
 struct ConfigDirectorProviderCachedValuesTests {
     private let client = FakeClient()
 
@@ -20,6 +18,18 @@ struct ConfigDirectorProviderCachedValuesTests {
         #expect(await events.waitFor(count: 1) == [.stale()])
         client.releaseConnections()
         await initialization.value
+    }
+
+    @Test func reportsTheCachedReasonAndTheValueIDOfAKeptValue() async {
+        client.scriptEvaluations(reason: .cached, valueID: "dark-mode-on")
+        let api = OpenFeatureAPI()
+        await api.setProviderAndWait(provider: ConfigDirectorProvider(client: client, ownsClient: true))
+
+        let details = api.getClient().getBooleanDetails(key: "dark-mode", defaultValue: false)
+
+        #expect(details.reason == "CACHED")
+        #expect(details.variant == "dark-mode-on")
+        #expect(details.errorCode == nil)
     }
 
     @Test func reportsAnErrorAndThenStaleAgainWhenInitializationTimesOutWhileServingTheKeptValues() async {
