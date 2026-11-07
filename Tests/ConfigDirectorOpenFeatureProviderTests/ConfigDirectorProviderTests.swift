@@ -268,6 +268,18 @@ struct ConfigDirectorProviderTests {
         #expect(await events.settled() == [.ready()])
     }
 
+    @Test func aSkippedRolloutResolvesWithTheDefaultReasonAndItsVariant() async {
+        client.scriptEvaluations(reason: .rolloutSkippedNoIdentifier, variant: "control")
+        let api = OpenFeatureAPI()
+        await api.setProviderAndWait(provider: ConfigDirectorProvider(client: client, ownsClient: true))
+
+        let details = api.getClient().getBooleanDetails(key: "dark-mode", defaultValue: false)
+
+        #expect(details.reason == "DEFAULT")
+        #expect(details.variant == "control")
+        #expect(details.errorCode == nil)
+    }
+
     @Test func letsAnInitializationInFlightFinishQuietlyAfterClosing() async {
         let provider = ConfigDirectorProvider(client: client, ownsClient: true)
         let events = EventRecorder(provider.observe())

@@ -20,8 +20,8 @@ struct ConfigDirectorProviderCachedValuesTests {
         await initialization.value
     }
 
-    @Test func reportsTheCachedReasonAndTheValueIDOfAKeptValue() async {
-        client.scriptEvaluations(reason: .cached, valueID: "dark-mode-on")
+    @Test func reportsTheCachedReasonAndTheVariantOfAKeptValue() async {
+        client.scriptEvaluations(reason: .cached, variant: "dark-mode-on")
         let api = OpenFeatureAPI()
         await api.setProviderAndWait(provider: ConfigDirectorProvider(client: client, ownsClient: true))
 

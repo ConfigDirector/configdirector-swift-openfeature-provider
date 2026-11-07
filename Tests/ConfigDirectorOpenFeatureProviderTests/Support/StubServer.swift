@@ -74,6 +74,15 @@ final class StubServer: Sendable {
             .compactMap { try? JSONDecoder().decode(ReceivedPayload.self, from: $0.body) }
     }
 
+    func reportedEvaluations(of key: String) -> [ReceivedEvaluation] {
+        requests.withLock { $0 }
+            .filter { $0.path.hasSuffix("/client/telemetry/v1") }
+            .compactMap { try? JSONDecoder().decode(ReceivedTelemetry.self, from: $0.body) }
+            .flatMap(\.aggregatedEvents.evaluatedConfig)
+            .map(\.event)
+            .filter { $0.key == key }
+    }
+
     private static func receive(
         on connection: NWConnection,
         buffered: Data,
@@ -143,15 +152,70 @@ struct ReceivedMetaContext: Decodable, Sendable {
     var sdkVersion: String
 }
 
+struct ReceivedEvaluation: Decodable, Sendable {
+    struct Value: Decodable, Sendable {
+        var valueId: String?
+    }
+
+    var key: String
+    var requestedType: String
+    var defaultValue: Value
+    var usedDefault: Bool
+    var evaluationReason: String
+    var ruleId: String?
+    var shareId: String?
+    var variationId: String?
+}
+
+private struct ReceivedTelemetry: Decodable {
+    struct AggregatedEvents: Decodable {
+        var evaluatedConfig: [AggregatedEvaluation]
+    }
+
+    struct AggregatedEvaluation: Decodable {
+        var event: ReceivedEvaluation
+    }
+
+    var aggregatedEvents: AggregatedEvents
+}
+
+struct ServedVariation: Encodable, Sendable {
+    var id: String
+    var name: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+    }
+}
+
 struct ServedConfig: Sendable {
     var key: String
     var type: String
     var value: String?
+    var variation: ServedVariation?
+    var ruleID: String?
+    var shareID: String?
 
-    init(_ key: String, _ type: String, _ value: String?) {
+    init(
+        _ key: String,
+        _ type: String,
+        _ value: String?,
+        variation: ServedVariation? = nil,
+        ruleID: String? = nil,
+        shareID: String? = nil
+    ) {
         self.key = key
         self.type = type
         self.value = value
+        self.variation = variation
+        self.ruleID = ruleID
+        self.shareID = shareID
     }
 }
 
@@ -162,6 +226,9 @@ private struct ServedConfigSet: Encodable {
         var type: String
         var value: String?
         var valueId: String?
+        var variation: ServedVariation?
+        var ruleId: String?
+        var shareId: String?
     }
 
     var environmentId = "env"
@@ -178,7 +245,10 @@ private func configSetJSON(_ configs: [ServedConfig]) -> String {
                 key: config.key,
                 type: config.type,
                 value: config.value,
-                valueId: "\(config.key)-value"
+                valueId: "\(config.key)-value",
+                variation: config.variation,
+                ruleId: config.ruleID,
+                shareId: config.shareID
             ))
         })
     ))

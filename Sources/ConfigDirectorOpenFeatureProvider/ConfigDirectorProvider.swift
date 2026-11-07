@@ -224,7 +224,7 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         context _: (any EvaluationContext)?
     ) throws -> ProviderEvaluation<Value> {
         let inCodeDefaultJSON = JSONValue(defaultValue)
-        return try client.evaluateFlag(key, as: JSONValue.self, default: inCodeDefaultJSON)
+        return try client.evaluateObjectFlag(key, default: inCodeDefaultJSON)
             .objectFlagEvaluation(inCodeDefaultValue: defaultValue, inCodeDefaultJSON: inCodeDefaultJSON)
             .providerEvaluation()
     }

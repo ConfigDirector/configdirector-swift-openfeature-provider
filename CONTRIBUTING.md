@@ -11,8 +11,19 @@ The tests need no SDK key and no network. The integration tests start an HTTP se
 and point the real ConfigDirector client at it, which is how they check what the provider sends to
 ConfigDirector, including the name and version it reports. The tests of `init(injectedClient:)`
 drive the provider through a test client from the SDK's `ConfigDirectorTesting` product, which is
-why the test target links that product. The package's minimum SDK version is 1.10.0, the release
-whose `evaluate` read the provider resolves every flag through.
+why the test target links that product. The latest release's minimum SDK version is 1.10.0, the
+release whose `evaluate` read the provider resolves every flag through.
+
+While the provider needs an SDK change that is not tagged yet, `Package.swift` requires the SDK's
+`main` branch and `Package.resolved` pins the commit on `main` the change landed in, so CI builds
+against that change. Push the SDK first, then refresh the pin with
+`swift package update configdirector-swift-sdk`. To build before the SDK is pushed, run
+`swift package edit configdirector-swift-sdk --path ../configdirector-swift-sdk`, and undo it with
+`swift package unedit configdirector-swift-sdk` before committing.
+
+Preparing the provider's release puts the version requirement back; see [Releasing](#releasing).
+Nothing in CI catches a requirement left on `main`, and Swift Package Manager refuses such a tag for
+any app that requires the provider by version.
 
 ## CI and the pre-push hook
 
@@ -96,7 +107,9 @@ there is no artifact to upload and no registry to push to.
 2. Bump `providerVersion` in
    [Sources/ConfigDirectorOpenFeatureProvider/Internal/Constants.swift](Sources/ConfigDirectorOpenFeatureProvider/Internal/Constants.swift)
    to match.
-3. Commit both, tag that commit `vX.Y.Z`, and push the tag.
+3. If `Package.swift` requires the SDK's `main` branch, put the version requirement back, at the SDK
+   release that carries the change, and refresh `Package.resolved`.
+4. Commit these, tag that commit `vX.Y.Z`, and push the tag.
 
 A major bump needs one more edit: the sample's project pins the provider `upToNextMajorVersion`
 from `0.1.0`, so it follows every `0.x` on its own and stops at `1.0.0`. Raise `minimumVersion` in

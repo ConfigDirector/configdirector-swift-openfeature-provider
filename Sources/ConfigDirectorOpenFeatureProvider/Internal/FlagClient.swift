@@ -15,6 +15,22 @@ protocol FlagClient: Sendable {
     func close()
 }
 
+extension FlagClient {
+    func evaluateObjectFlag(
+        _ key: String,
+        default inCodeDefaultJSON: JSONValue
+    ) -> FlagEvaluation<JSONValue> {
+        switch inCodeDefaultJSON {
+        case let .object(members):
+            evaluateFlag(key, as: JSONObject.self, default: JSONObject(members: members)).mapValue(\.json)
+        case let .array(elements):
+            evaluateFlag(key, as: JSONArray.self, default: JSONArray(elements: elements)).mapValue(\.json)
+        case .bool, .integer, .double, .string, .null:
+            evaluateFlag(key, as: JSONValue.self, default: inCodeDefaultJSON)
+        }
+    }
+}
+
 extension ConfigDirectorClient: FlagClient {
     func evaluateFlag<Value: ConfigValue>(
         _ key: String,

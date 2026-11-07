@@ -4,7 +4,7 @@ import ConfigDirector
 final class FakeClient: FlagClient {
     private struct ScriptedEvaluation {
         var reason = EvaluationReason.valueMissing
-        var valueID: String?
+        var variant: String?
     }
 
     private struct State {
@@ -94,8 +94,8 @@ final class FakeClient: FlagClient {
         continuation.yield(.cachedValuesLoaded)
     }
 
-    func scriptEvaluations(reason: EvaluationReason, valueID: String?) {
-        state.withLock { $0.scriptedEvaluation = ScriptedEvaluation(reason: reason, valueID: valueID) }
+    func scriptEvaluations(reason: EvaluationReason, variant: String?) {
+        state.withLock { $0.scriptedEvaluation = ScriptedEvaluation(reason: reason, variant: variant) }
     }
 
     func receiveConfigs(_ keys: [String], removedKeys: [String] = []) {
@@ -140,7 +140,7 @@ final class FakeClient: FlagClient {
         return FlagEvaluation(
             key: key,
             value: defaultValue,
-            valueID: scripted.valueID,
+            variant: scripted.variant,
             reason: scripted.reason
         )
     }

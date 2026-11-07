@@ -36,13 +36,45 @@ extension JSONValue {
         case .null: .null
         }
     }
+}
 
-    func fitsTheShape(of defaultValue: JSONValue) -> Bool {
-        switch (defaultValue, self) {
-        case (.object, .object), (.array, .array): true
-        case (.object, _), (.array, _): false
-        case (.bool, _), (.integer, _), (.double, _), (.string, _), (.null, _): true
-        }
+struct JSONObject: Decodable, Sendable, CustomStringConvertible {
+    let members: [String: JSONValue]
+
+    init(members: [String: JSONValue]) {
+        self.members = members
+    }
+
+    init(from decoder: any Decoder) throws {
+        members = try decoder.singleValueContainer().decode([String: JSONValue].self)
+    }
+
+    var json: JSONValue {
+        .object(members)
+    }
+
+    var description: String {
+        json.description
+    }
+}
+
+struct JSONArray: Decodable, Sendable, CustomStringConvertible {
+    let elements: [JSONValue]
+
+    init(elements: [JSONValue]) {
+        self.elements = elements
+    }
+
+    init(from decoder: any Decoder) throws {
+        elements = try decoder.singleValueContainer().decode([JSONValue].self)
+    }
+
+    var json: JSONValue {
+        .array(elements)
+    }
+
+    var description: String {
+        json.description
     }
 }
 
