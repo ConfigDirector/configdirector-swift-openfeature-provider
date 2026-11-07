@@ -8,6 +8,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-06
+
 ### Added
 
 - The provider now implements OpenFeature's tracking. `client.track(key:details:)` reports to
@@ -15,6 +17,7 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
   on the live feed and count it for each variation of a running experiment. Before, a `track` call did
   nothing. The details' value is sent as the event's value and their attributes as the event's details.
   The event goes with the context the underlying client currently has, as flag resolutions do.
+  Requires version 1.11.0 of the Swift client SDK.
 - An event counts for an experiment only when that context has a targeting key or `id`, the one the
   experiment's flag was resolved for. Without one, the event is still reported. An event for a context
   marked `anonymous` goes without its identifier.

@@ -1,13 +1,13 @@
 {
-  "originHash" : "7d267c82f7e35bb32e4deb86d9e7afb4832d95bf6b55c6712e51ae4473680bbf",
+  "originHash" : "4c25053ef113636165a1290373bb3fc9aa1a4125f3567ba8b579de3df738ac86",
   "pins" : [
     {
       "identity" : "configdirector-swift-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ConfigDirector/configdirector-swift-sdk.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "0afeb0715d62df15d1135135a257a986c25cbdd1"
+        "revision" : "5d87d4b7bc565dc72fb610e0fdfd09edb5748505",
+        "version" : "1.11.0"
       }
     },
     {

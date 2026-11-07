@@ -11,8 +11,8 @@ The tests need no SDK key and no network. The integration tests start an HTTP se
 and point the real ConfigDirector client at it, which is how they check what the provider sends to
 ConfigDirector, including the name and version it reports. The tests of `init(injectedClient:)`
 drive the provider through a test client from the SDK's `ConfigDirectorTesting` product, which is
-why the test target links that product. The latest release's minimum SDK version is 1.10.0, the
-release whose `evaluate` read the provider resolves every flag through.
+why the test target links that product. The latest release's minimum SDK version is 1.11.0, the
+release with the variation the provider reports as `variant` and the `track` it forwards to.
 
 While the provider needs an SDK change that is not tagged yet, `Package.swift` requires the SDK's
 `main` branch and `Package.resolved` pins the commit on `main` the change landed in, so CI builds
