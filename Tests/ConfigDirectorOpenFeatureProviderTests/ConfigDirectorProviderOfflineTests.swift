@@ -73,6 +73,7 @@ struct ConfigDirectorProviderOfflineTests {
 
         let client = await register(provider)
         _ = client.getBooleanValue(key: "dark-mode", defaultValue: false)
+        client.track(key: "checkout-completed")
         await api.setEvaluationContextAndWait(evaluationContext: ImmutableContext(targetingKey: "user-456"))
         provider.close()
 

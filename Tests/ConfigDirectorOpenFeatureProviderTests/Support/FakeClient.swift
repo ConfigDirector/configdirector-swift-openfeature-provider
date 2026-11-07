@@ -2,6 +2,12 @@ import ConfigDirector
 @testable import ConfigDirectorOpenFeatureProvider
 
 final class FakeClient: FlagClient {
+    struct TrackCall: Equatable, Sendable {
+        var eventName: String
+        var value: TrackedEventValue?
+        var details: TrackedEventDetails?
+    }
+
     private struct ScriptedEvaluation {
         var reason = EvaluationReason.valueMissing
         var variant: String?
@@ -18,6 +24,7 @@ final class FakeClient: FlagClient {
         var heldConnections: [CheckedContinuation<Void, Never>] = []
         var initializedContexts: [ConfigDirectorContext?] = []
         var updatedContexts: [ConfigDirectorContext] = []
+        var trackCalls: [TrackCall] = []
         var closeCount = 0
         var scriptedEvaluation = ScriptedEvaluation()
     }
@@ -46,6 +53,10 @@ final class FakeClient: FlagClient {
 
     var updatedContexts: [ConfigDirectorContext] {
         state.withLock(\.updatedContexts)
+    }
+
+    var trackCalls: [TrackCall] {
+        state.withLock(\.trackCalls)
     }
 
     var closeCount: Int {
@@ -125,6 +136,11 @@ final class FakeClient: FlagClient {
         default defaultValue: Value
     ) -> FlagEvaluation<Value> {
         scriptedEvaluation(of: key, default: defaultValue)
+    }
+
+    func track(_ eventName: String, options: TrackOptions?) {
+        let call = TrackCall(eventName: eventName, value: options?.value, details: options?.details)
+        state.withLock { $0.trackCalls.append(call) }
     }
 
     func close() {

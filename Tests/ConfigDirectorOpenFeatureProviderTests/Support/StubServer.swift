@@ -75,12 +75,28 @@ final class StubServer: Sendable {
     }
 
     func reportedEvaluations(of key: String) -> [ReceivedEvaluation] {
-        requests.withLock { $0 }
-            .filter { $0.path.hasSuffix("/client/telemetry/v1") }
-            .compactMap { try? JSONDecoder().decode(ReceivedTelemetry.self, from: $0.body) }
+        receivedTelemetry
             .flatMap(\.aggregatedEvents.evaluatedConfig)
             .map(\.event)
             .filter { $0.key == key }
+    }
+
+    var telemetryBodies: [String] {
+        telemetryRequestBodies.compactMap { String(bytes: $0, encoding: .utf8) }
+    }
+
+    var reportedTrackedEvents: [ReceivedTrackedEvent] {
+        receivedTelemetry.flatMap(\.discreteEvents.trackedEvents)
+    }
+
+    private var telemetryRequestBodies: [Data] {
+        requests.withLock { $0 }
+            .filter { $0.path.hasSuffix("/client/telemetry/v1") }
+            .map(\.body)
+    }
+
+    private var receivedTelemetry: [ReceivedTelemetry] {
+        telemetryRequestBodies.compactMap { try? JSONDecoder().decode(ReceivedTelemetry.self, from: $0) }
     }
 
     private static func receive(
@@ -167,7 +183,17 @@ struct ReceivedEvaluation: Decodable, Sendable {
     var variationId: String?
 }
 
+struct ReceivedTrackedEvent: Decodable, Sendable {
+    var name: String
+    var contextKind: String?
+    var contextIdentifier: String?
+}
+
 private struct ReceivedTelemetry: Decodable {
+    struct DiscreteEvents: Decodable {
+        var trackedEvents: [ReceivedTrackedEvent]
+    }
+
     struct AggregatedEvents: Decodable {
         var evaluatedConfig: [AggregatedEvaluation]
     }
@@ -176,6 +202,7 @@ private struct ReceivedTelemetry: Decodable {
         var event: ReceivedEvaluation
     }
 
+    var discreteEvents: DiscreteEvents
     var aggregatedEvents: AggregatedEvents
 }
 

@@ -73,6 +73,8 @@ struct CheckoutTests {
 
 The provider never closes a client it was given, so the test closes it. Full details are in the [testing section of the official documentation](https://docs.configdirector.com/sdks/openfeature/swift#test-your-code).
 
+An event the code under test tracks through OpenFeature shows up in `testClient.trackedEvents`, in call order, as `TrackedEvent(name:context:value:details:)`.
+
 ## Documentation
 
 Refer to the [official documentation for the OpenFeature Swift provider](https://docs.configdirector.com/sdks/openfeature/swift).

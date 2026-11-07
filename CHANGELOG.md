@@ -8,6 +8,23 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
 
 ## [Unreleased]
 
+### Added
+
+- The provider now implements OpenFeature's tracking. `client.track(key:details:)` reports to
+  ConfigDirector that something happened, such as a completed checkout, so ConfigDirector can show it
+  on the live feed and count it for each variation of a running experiment. Before, a `track` call did
+  nothing. The details' value is sent as the event's value and their attributes as the event's details.
+  The event goes with the context the underlying client currently has, as flag resolutions do.
+- An event counts for an experiment only when that context has a targeting key or `id`, the one the
+  experiment's flag was resolved for. Without one, the event is still reported. An event for a context
+  marked `anonymous` goes without its identifier.
+- Tracked events are sent with the next telemetry batch, at most 1,000 per batch; events beyond that
+  are not reported. An event whose name does not have 1 to 150 characters is not reported. Attributes
+  with more than 20 top-level keys or larger than 1 KB as JSON, and a value that is not a finite
+  number, are left out and the event is still reported. Each of these logs one warning per telemetry
+  batch. A date attribute is sent as ISO 8601 text and a number that is not finite as `null`. A `track`
+  call does nothing in offline mode.
+
 ### Changed
 
 - The `variant` in evaluation details is now the variation's name when the config has variations and
@@ -26,6 +43,8 @@ version can be tagged. See [Releasing](CONTRIBUTING.md#releasing).
   received the in-code default value. The app still receives the in-code default value with the error
   code `typeMismatch`. Such a read now counts towards the Config type mismatch alert, which names it
   as requested as `JSONObject` or `JSONArray`.
+- A telemetry report larger than ConfigDirector accepts is now discarded with a warning, and the next
+  report is still sent. Before, the provider stopped sending telemetry until the app restarted.
 
 ## [1.5.0] - 2026-10-27
 

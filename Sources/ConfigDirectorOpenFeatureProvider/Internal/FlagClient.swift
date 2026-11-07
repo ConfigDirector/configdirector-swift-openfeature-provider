@@ -12,6 +12,7 @@ protocol FlagClient: Sendable {
         as type: Value.Type,
         default defaultValue: Value
     ) -> FlagEvaluation<Value>
+    func track(_ eventName: String, options: TrackOptions?)
     func close()
 }
 

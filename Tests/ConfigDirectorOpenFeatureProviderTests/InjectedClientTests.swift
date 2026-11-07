@@ -96,6 +96,52 @@ struct InjectedClientTests {
         #expect(testClient.contextUpdates.map(\.id) == ["user-123", "user-456"])
     }
 
+    @Test func recordsAnEventTrackedThroughOpenFeatureOnTheTestClient() async {
+        let testClient = makeTestClient()
+        defer { testClient.client.close() }
+        await api.setProviderAndWait(
+            provider: ConfigDirectorProvider(injectedClient: testClient.client),
+            initialContext: ImmutableContext(targetingKey: "user-123")
+        )
+
+        api.getClient().track(
+            key: "checkout-completed",
+            details: ImmutableTrackingEventDetails(
+                value: 49.9,
+                structure: ImmutableStructure(attributes: ["plan": .string("pro")])
+            )
+        )
+
+        #expect(testClient.trackedEvents == [
+            TrackedEvent(
+                name: "checkout-completed",
+                context: ConfigDirectorContext(id: "user-123"),
+                value: 49.9,
+                details: ["plan": "pro"]
+            ),
+        ])
+    }
+
+    @Test func tracksForTheContextOfTheClientRatherThanTheOneHandedToTheCall() async {
+        let testClient = makeTestClient()
+        defer { testClient.client.close() }
+        let provider = ConfigDirectorProvider(injectedClient: testClient.client)
+        await api.setProviderAndWait(
+            provider: provider,
+            initialContext: ImmutableContext(targetingKey: "user-123")
+        )
+
+        provider.track(
+            key: "app-opened",
+            context: ImmutableContext(targetingKey: "user-456"),
+            details: nil
+        )
+
+        #expect(testClient.trackedEvents == [
+            TrackedEvent(name: "app-opened", context: ConfigDirectorContext(id: "user-123")),
+        ])
+    }
+
     @Test func becomesReadyOnceAHeldInitializationCompletes() async throws {
         let testClient = makeTestClient(values: ["dark-mode": true])
         defer { testClient.client.close() }

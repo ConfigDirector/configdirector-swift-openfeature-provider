@@ -58,6 +58,33 @@ import OpenFeature
 /// A configuration-changed event is emitted every time config state arrives, carrying the keys of
 /// the configs in the update followed by the keys of configs a full update removed.
 ///
+/// ## Tracking
+///
+/// A `track` call on an OpenFeature client reports to ConfigDirector that something happened, such
+/// as a completed checkout, so it can be counted:
+///
+/// ```swift
+/// client.track(
+///     key: "checkout-completed",
+///     details: ImmutableTrackingEventDetails(
+///         value: 49.9,
+///         structure: ImmutableStructure(attributes: ["plan": .string("pro")])
+///     )
+/// )
+/// ```
+///
+/// The details' value is sent as the event's value and their attributes as the event's details. Like
+/// a flag resolution, the event goes with the context the underlying client currently has. It counts
+/// for an experiment only when that context has a targeting key or `id`, the one the experiment's
+/// flag was resolved for; without one the event is still reported, and an event for a context marked
+/// `anonymous` goes without its identifier.
+///
+/// Events are sent with the next telemetry batch, at most 1,000 per batch; events beyond that are not
+/// reported, and neither is an event whose name does not have 1 to 150 characters. Attributes with
+/// more than 20 top-level keys or larger than 1 KB as JSON, and a value that is not a finite number,
+/// are left out and the event is still reported. Each of these logs one warning per telemetry batch.
+/// In `ConnectionMode.offline` mode a `track` call does nothing.
+///
 /// The OpenFeature Swift SDK does not shut providers down, so the connection stays open until the
 /// provider is released or ``close()`` is called. An instance serves a single registration: after
 /// closing it, create a new one.
@@ -227,6 +254,14 @@ public final class ConfigDirectorProvider: FeatureProvider, Sendable {
         return try client.evaluateObjectFlag(key, default: inCodeDefaultJSON)
             .objectFlagEvaluation(inCodeDefaultValue: defaultValue, inCodeDefaultJSON: inCodeDefaultJSON)
             .providerEvaluation()
+    }
+
+    public func track(
+        key: String,
+        context _: (any EvaluationContext)?,
+        details: (any TrackingEventDetails)?
+    ) {
+        client.track(key, options: TrackOptions(trackingEventDetails: details))
     }
 
     /// Closes the connection to ConfigDirector and stops emitting provider events.
